@@ -1,0 +1,331 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Design tokens — Emerald & Gold on charcoal (swappable palette)
+   ──────────────────────────────────────────────────────────────────────────── */
+:root {
+  --bg-base: #070a09;
+  --bg-surface: #0e1412;
+  --bg-surface-2: #141c19;
+
+  --emerald: #10b981;
+  --emerald-bright: #34d399;
+  --emerald-deep: #0b7a57;
+
+  --gold: #d4af37;
+  --gold-bright: #f5d58a;
+  --gold-deep: #9c7c2b;
+
+  --ink: #e8edeb;
+  --ink-muted: #93a099;
+  --ink-faint: #5c6862;
+
+  /* Look-Through neon trace */
+  --trace-core: #fff4cf;
+  --trace-glow: #ffd66b;
+  --trace-halo: #34d399;
+
+  --edge: rgba(125, 145, 137, 0.32);
+  --glass-fill: rgba(255, 255, 255, 0.035);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Base
+   ──────────────────────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg-base);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  /* Tabular numerals for all monetary figures */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Components
+   ──────────────────────────────────────────────────────────────────────────── */
+@layer components {
+  .glass {
+    background: var(--glass-fill);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+  }
+
+  /* Premium hairline gradient border used on panels */
+  .hairline {
+    position: relative;
+  }
+  .hairline::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.16),
+      rgba(255, 255, 255, 0.02) 40%,
+      rgba(212, 175, 55, 0.12)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Graph node states (toggled by NodeShell)
+   ──────────────────────────────────────────────────────────────────────────── */
+.wg-node {
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 420ms ease,
+    filter 420ms ease,
+    box-shadow 420ms ease;
+  will-change: transform, filter, opacity;
+}
+
+.wg-node--household {
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.25),
+    0 0 40px -6px rgba(212, 175, 55, 0.45),
+    0 24px 60px -20px rgba(0, 0, 0, 0.8);
+}
+.wg-node--portfolio {
+  box-shadow:
+    0 0 0 1px rgba(16, 185, 129, 0.22),
+    0 0 26px -8px rgba(16, 185, 129, 0.4),
+    0 18px 44px -20px rgba(0, 0, 0, 0.75);
+}
+.wg-node--account {
+  box-shadow:
+    0 0 0 1px rgba(125, 145, 137, 0.18),
+    0 14px 36px -22px rgba(0, 0, 0, 0.75);
+}
+.wg-node--account.is-alt {
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.3),
+    0 0 22px -8px rgba(212, 175, 55, 0.35),
+    0 14px 36px -22px rgba(0, 0, 0, 0.75);
+}
+
+.wg-node.is-selected {
+  transform: translateZ(0) scale(1.04);
+}
+.wg-node--household.is-selected {
+  box-shadow:
+    0 0 0 1px rgba(245, 213, 138, 0.6),
+    0 0 60px -4px rgba(212, 175, 55, 0.6),
+    0 24px 60px -20px rgba(0, 0, 0, 0.85);
+}
+.wg-node--portfolio.is-selected {
+  box-shadow:
+    0 0 0 1px rgba(52, 211, 153, 0.6),
+    0 0 44px -6px rgba(16, 185, 129, 0.6),
+    0 18px 44px -20px rgba(0, 0, 0, 0.8);
+}
+.wg-node--account.is-selected {
+  box-shadow:
+    0 0 0 1px rgba(231, 237, 235, 0.45),
+    0 0 30px -8px rgba(180, 200, 190, 0.5),
+    0 14px 36px -22px rgba(0, 0, 0, 0.8);
+}
+
+/* Look-Through: dim everything off the lineage */
+.wg-node.is-dimmed {
+  opacity: 0.16;
+  filter: grayscale(0.7) brightness(0.7) blur(0.4px);
+}
+
+/* Look-Through: the traced lineage nodes blaze */
+.wg-node.is-traced {
+  box-shadow:
+    0 0 0 1px rgba(255, 214, 107, 0.7),
+    0 0 50px -4px rgba(255, 214, 107, 0.65),
+    0 0 90px -10px rgba(52, 211, 153, 0.4);
+  animation: wg-breathe 2.4s ease-in-out infinite;
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   React Flow surface
+   ──────────────────────────────────────────────────────────────────────────── */
+.react-flow {
+  background: transparent;
+}
+.react-flow__renderer,
+.react-flow__pane {
+  cursor: grab;
+}
+.react-flow__pane.dragging {
+  cursor: grabbing;
+}
+/* Hide connection handles — edges attach, but we never want visible dots */
+.react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+  min-width: 1px;
+  min-height: 1px;
+  width: 1px;
+  height: 1px;
+  border: 0;
+  background: transparent;
+}
+.react-flow__edge {
+  pointer-events: none;
+}
+.react-flow__controls {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.7);
+}
+.react-flow__controls-button {
+  background: var(--bg-surface-2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--ink-muted);
+}
+.react-flow__controls-button:hover {
+  background: #1b2622;
+  color: var(--ink);
+}
+.react-flow__controls-button svg {
+  fill: currentColor;
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Scrollbars (details panel)
+   ──────────────────────────────────────────────────────────────────────────── */
+.scroll-slim::-webkit-scrollbar {
+  width: 8px;
+}
+.scroll-slim::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-slim::-webkit-scrollbar-thumb {
+  background: rgba(125, 145, 137, 0.25);
+  border-radius: 999px;
+}
+.scroll-slim::-webkit-scrollbar-thumb:hover {
+  background: rgba(125, 145, 137, 0.4);
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Utilities
+   ──────────────────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-glow-gold {
+    text-shadow: 0 0 22px rgba(212, 175, 55, 0.45);
+  }
+  .text-glow-emerald {
+    text-shadow: 0 0 22px rgba(16, 185, 129, 0.45);
+  }
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.07),
+      transparent
+    );
+    animation: wg-shimmer 1.6s infinite;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Keyframes
+   ──────────────────────────────────────────────────────────────────────────── */
+@keyframes wg-flow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+@keyframes wg-trace-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes wg-breathe {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.18);
+  }
+}
+
+@keyframes wg-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes wg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes wg-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes wg-pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wg-node,
+  .react-flow__edge * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
