@@ -6,6 +6,7 @@ export function TopBar() {
   const lookThrough = useGraphStore((s) => s.lookThrough)
   const toggleLookThrough = useGraphStore((s) => s.toggleLookThrough)
   const household = useGraphStore((s) => s.data?.household ?? null)
+  const liveTotalAum = useGraphStore((s) => s.liveTotalAum)
 
   return (
     <header className="relative z-30 flex items-center justify-between gap-4 border-b border-white/[0.06] bg-black/20 px-6 py-3.5 backdrop-blur-md">
@@ -14,18 +15,15 @@ export function TopBar() {
         <BrandMark />
         <div className="leading-tight">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold tracking-tight text-ink">
-              Interactive{' '}
-              <span className="font-serif font-medium text-gld-bright">
-                Wealth Graph
-              </span>
+            <span className="text-[15px] font-semibold uppercase tracking-[0.3em] text-ink">
+              Certuity
             </span>
             <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[9px] font-medium uppercase tracking-[0.14em] text-ink-faint">
               Demo data
             </span>
           </div>
-          <p className="text-[11px] text-ink-faint">
-            Family-office wealth structure
+          <p className="text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+            Certainty · Ingenuity
           </p>
         </div>
       </div>
@@ -38,7 +36,7 @@ export function TopBar() {
           <Readout
             label="Total AUM"
             value={formatCompactCurrency(
-              household.SalenticaLMNTS__Total_AUM__c,
+              liveTotalAum || household.SalenticaLMNTS__Total_AUM__c,
             )}
             accent
           />
@@ -55,7 +53,7 @@ export function TopBar() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 className="h-1.5 w-1.5 rounded-full bg-emr-bright"
-                style={{ boxShadow: '0 0 10px 1px rgba(52,211,153,0.8)' }}
+                style={{ boxShadow: '0 0 10px 1px rgba(127,184,232,0.8)' }}
               />
             )}
           </div>
@@ -110,11 +108,11 @@ function AnalyzerSwitch({
       onClick={onToggle}
       className="relative h-7 w-12 rounded-full border transition-colors duration-300"
       style={{
-        borderColor: active ? 'rgba(52,211,153,0.6)' : 'rgba(255,255,255,0.12)',
+        borderColor: active ? 'rgba(127,184,232,0.6)' : 'rgba(255,255,255,0.12)',
         background: active
-          ? 'linear-gradient(90deg, rgba(11,122,87,0.6), rgba(16,185,129,0.5))'
+          ? 'linear-gradient(90deg, rgba(58,110,158,0.6), rgba(91,155,213,0.5))'
           : 'rgba(255,255,255,0.05)',
-        boxShadow: active ? '0 0 18px -2px rgba(16,185,129,0.6)' : 'none',
+        boxShadow: active ? '0 0 18px -2px rgba(91,155,213,0.6)' : 'none',
       }}
     >
       <motion.span
@@ -137,24 +135,10 @@ function BrandMark() {
   return (
     <div
       className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10"
-      style={{ background: 'linear-gradient(160deg, #12201b, #0a0f0d)' }}
+      style={{ background: 'linear-gradient(160deg, #16304c, #0b1e36)' }}
     >
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <circle cx="12" cy="7" r="3.2" fill="url(#bm-g)" />
-        <circle cx="5.5" cy="17.5" r="2.1" fill="#D4AF37" />
-        <circle cx="18.5" cy="17.5" r="2.1" fill="#D4AF37" />
-        <path
-          d="M12 10.2 6 16M12 10.2 18 16"
-          stroke="#2c3d35"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-        />
-        <defs>
-          <radialGradient id="bm-g" cx="50%" cy="40%" r="65%">
-            <stop offset="0%" stopColor="#34D399" />
-            <stop offset="100%" stopColor="#0B7A57" />
-          </radialGradient>
-        </defs>
+        <path d="M12 5V19M5 12H19" stroke="#C99B6A" strokeWidth="3.4" strokeLinecap="round" />
       </svg>
     </div>
   )

@@ -6,30 +6,31 @@
    Design tokens — Emerald & Gold on charcoal (swappable palette)
    ──────────────────────────────────────────────────────────────────────────── */
 :root {
-  --bg-base: #070a09;
-  --bg-surface: #0e1412;
-  --bg-surface-2: #141c19;
+  --bg-base: #0b1e36;
+  --bg-surface: #0e2238;
+  --bg-surface-2: #16304c;
 
-  --emerald: #10b981;
-  --emerald-bright: #34d399;
-  --emerald-deep: #0b7a57;
+  /* 'emerald' vars now hold Certuity azure (token name kept). */
+  --emerald: #5b9bd5;
+  --emerald-bright: #7fb8e8;
+  --emerald-deep: #3a6e9e;
 
-  --gold: #d4af37;
-  --gold-bright: #f5d58a;
-  --gold-deep: #9c7c2b;
+  --gold: #c9a86a;
+  --gold-bright: #e2c88c;
+  --gold-deep: #9c8350;
 
-  --ink: #e8edeb;
-  --ink-muted: #93a099;
-  --ink-faint: #5c6862;
+  --ink: #eef3f9;
+  --ink-muted: #9fb0c4;
+  --ink-faint: #5d7290;
 
-  /* Look-Through neon trace */
+  /* Look-Through trace (warm white-gold) */
   --trace-core: #fff4cf;
   --trace-glow: #ffd66b;
-  --trace-halo: #34d399;
+  --trace-halo: #7fb8e8;
 
-  --edge: rgba(125, 145, 137, 0.32);
+  --edge: rgba(120, 150, 190, 0.32);
   --glass-fill: rgba(255, 255, 255, 0.035);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.09);
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -240,10 +241,10 @@
    ──────────────────────────────────────────────────────────────────────────── */
 @layer utilities {
   .text-glow-gold {
-    text-shadow: 0 0 22px rgba(212, 175, 55, 0.45);
+    text-shadow: 0 0 22px rgba(201, 168, 106, 0.5);
   }
   .text-glow-emerald {
-    text-shadow: 0 0 22px rgba(16, 185, 129, 0.45);
+    text-shadow: 0 0 22px rgba(91, 155, 213, 0.45);
   }
   .shimmer {
     position: relative;

@@ -4,23 +4,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        base: '#070A09',
-        surface: '#0E1412',
-        'surface-2': '#141C19',
+        base: '#0B1E36',
+        surface: '#0E2238',
+        'surface-2': '#16304C',
         ink: {
-          DEFAULT: '#E8EDEB',
-          muted: '#93A099',
-          faint: '#5C6862',
+          DEFAULT: '#EEF3F9',
+          muted: '#9FB0C4',
+          faint: '#5D7290',
         },
+        // 'emr' kept as the token name; now Certuity azure (was emerald).
         emr: {
-          DEFAULT: '#10B981',
-          bright: '#34D399',
-          deep: '#0B7A57',
+          DEFAULT: '#5B9BD5',
+          bright: '#7FB8E8',
+          deep: '#3A6E9E',
         },
+        // 'gld' now champagne gold.
         gld: {
-          DEFAULT: '#D4AF37',
-          bright: '#F5D58A',
-          deep: '#9C7C2B',
+          DEFAULT: '#C9A86A',
+          bright: '#E2C88C',
+          deep: '#9C8350',
         },
       },
       fontFamily: {

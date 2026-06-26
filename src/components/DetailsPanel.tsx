@@ -24,9 +24,9 @@ function kindOf(record: WealthRecord): NodeKind {
 }
 
 const KIND_META: Record<NodeKind, { label: string; tint: string }> = {
-  household: { label: 'Family Office', tint: '#F5D58A' },
-  portfolio: { label: 'Legal Entity', tint: '#34D399' },
-  account: { label: 'Financial Account', tint: '#CFD8D3' },
+  household: { label: 'Family Office', tint: '#E2C88C' },
+  portfolio: { label: 'Legal Entity', tint: '#8FB6DA' },
+  account: { label: 'Financial Account', tint: '#C7D4E2' },
 }
 
 export function DetailsPanel() {
@@ -150,7 +150,7 @@ function HouseholdBody({
       <AmountHero
         label="Total Assets Under Management"
         amount={record.SalenticaLMNTS__Total_AUM__c}
-        tint="#F5D58A"
+        tint="#E2C88C"
       />
       <StatRow
         items={[
@@ -187,9 +187,9 @@ function PortfolioBody({
       <AmountHero
         label="Assets Under Management"
         amount={record.SalenticaLMNTS__AUM__c}
-        tint="#34D399"
+        tint="#8FB6DA"
       />
-      <ShareBar label="Share of household" value={share} tint="#34D399" />
+      <ShareBar label="Share of household" value={share} tint="#8FB6DA" />
       <Section title="Entity">
         <Field label="Type" value={record.SalenticaLMNTS__Entity_Type__c} />
         <Field label="Jurisdiction" value={record.SalenticaLMNTS__Jurisdiction__c} />
@@ -237,13 +237,13 @@ function AccountBody({
       <AmountHero
         label="Market Value"
         amount={record.SalenticaLMNTS__Market_Value__c}
-        tint={isAlt ? '#F5D58A' : '#E8EDEB'}
+        tint={isAlt ? '#E2C88C' : '#E8EDEB'}
       />
       {portfolio && (
         <ShareBar
           label={`Share of ${portfolio.Name}`}
           value={share}
-          tint={isAlt ? '#F5D58A' : '#34D399'}
+          tint={isAlt ? '#E2C88C' : '#8FB6DA'}
         />
       )}
       <Section title="Account">
@@ -434,9 +434,9 @@ function Lineage({
   household: string
 }) {
   const steps = [
-    { name: account, tint: '#CFD8D3' },
-    { name: portfolio, tint: '#34D399' },
-    { name: household, tint: '#F5D58A' },
+    { name: account, tint: '#C7D4E2' },
+    { name: portfolio, tint: '#8FB6DA' },
+    { name: household, tint: '#E2C88C' },
   ]
   return (
     <div className="flex flex-col gap-0">

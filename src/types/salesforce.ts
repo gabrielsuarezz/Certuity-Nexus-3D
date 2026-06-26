@@ -1,5 +1,3 @@
-import type { Node, Edge } from '@xyflow/react'
-
 /**
  * Types that mirror the Salentica/Salesforce schema exactly, plus the
  * normalized, app-friendly shapes we derive from it.
@@ -81,20 +79,6 @@ export type WealthRecord =
   | RelationshipRecord
   | PortfolioRecord
   | FinancialAccountRecord
-
-// `extends Record<string, unknown>` keeps React Flow's Node<T> constraint happy.
-export interface GraphNodeData extends Record<string, unknown> {
-  kind: NodeKind
-  label: string
-  /** Market value (account) / AUM (portfolio) / total AUM (household). */
-  aum: number
-  subtitle: string
-  isAlternative: boolean
-  record: WealthRecord
-}
-
-export type WealthNode = Node<GraphNodeData, NodeKind>
-export type WealthEdge = Edge
 
 export interface Lineage {
   nodeIds: Set<string>

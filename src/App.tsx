@@ -4,9 +4,10 @@ import { Background } from '@/components/Background'
 import { TopBar } from '@/components/TopBar'
 import { LoadingState } from '@/components/states/LoadingState'
 import { ErrorState } from '@/components/states/ErrorState'
-import { GraphCanvas } from '@/components/GraphCanvas'
+import { PrismScene } from '@/three/PrismScene'
 import { DetailsPanel } from '@/components/DetailsPanel'
 import { useWealthData } from '@/hooks/useWealthData'
+import { useMockMarketData } from '@/hooks/useMockMarketData'
 import { useGraphStore } from '@/store/useGraphStore'
 
 export default function App() {
@@ -17,6 +18,9 @@ export default function App() {
   useEffect(() => {
     if (data) setData(data)
   }, [data, setData])
+
+  // Simulated real-time market feed (no-op until data is loaded).
+  useMockMarketData()
 
   return (
     <div className="relative h-full w-full">
@@ -39,7 +43,7 @@ export default function App() {
 
           {status === 'ready' && data && (
             <>
-              <GraphCanvas data={data} />
+              <PrismScene data={data} />
               <DetailsPanel />
             </>
           )}
