@@ -25,5 +25,12 @@ Thumbs.db
 .env.*
 !.env.example
 
+# Python backend
+.venv
+__pycache__/
+*.pyc
+.pytest_cache/
+server/audit.log.jsonl
+
 # Vercel
 .vercel

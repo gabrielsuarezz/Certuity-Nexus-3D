@@ -28,4 +28,7 @@ export const config = {
 
   /** Simulated latency for the mock so the loading state is visible in the demo. */
   mockLatencyMs: readNumber(import.meta.env.VITE_MOCK_LATENCY_MS, 850),
+
+  /** Base URL of the agent backend (FastAPI / Semantic Kernel). */
+  agentBaseUrl: import.meta.env.VITE_AGENT_BASE_URL ?? 'http://127.0.0.1:8000',
 } as const

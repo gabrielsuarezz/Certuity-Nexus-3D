@@ -1,0 +1,199 @@
+{
+  "SalenticaLMNTS__Relationship__c": {
+    "totalSize": 1,
+    "done": true,
+    "records": [
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__Relationship__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__Relationship__c/a0R8d00000Smith1"
+        },
+        "Id": "a0R8d00000Smith1",
+        "Name": "The Smith Family Office",
+        "SalenticaLMNTS__Relationship_Type__c": "Single-Family Office",
+        "SalenticaLMNTS__Total_AUM__c": 487500000,
+        "SalenticaLMNTS__Primary_Advisor__c": "Eleanor Vance",
+        "SalenticaLMNTS__Reporting_Currency__c": "USD",
+        "SalenticaLMNTS__Risk_Profile__c": "Balanced Growth",
+        "SalenticaLMNTS__Inception_Date__c": "2009-04-15"
+      }
+    ]
+  },
+  "SalenticaLMNTS__Portfolio__c": {
+    "totalSize": 3,
+    "done": true,
+    "records": [
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__Portfolio__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__Portfolio__c/a0P8d00000Trust1"
+        },
+        "Id": "a0P8d00000Trust1",
+        "Name": "Smith Family Irrevocable Trust",
+        "SalenticaLMNTS__Relationship__c": "a0R8d00000Smith1",
+        "SalenticaLMNTS__Entity_Type__c": "Irrevocable Trust",
+        "SalenticaLMNTS__AUM__c": 210000000,
+        "SalenticaLMNTS__Beneficiaries__c": "John Smith Jr.; Sarah Smith-Chen; The Smith Foundation",
+        "SalenticaLMNTS__Jurisdiction__c": "South Dakota",
+        "SalenticaLMNTS__Tax_ID_Masked__c": "**-***1042",
+        "SalenticaLMNTS__Formation_Date__c": "2011-06-30"
+      },
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__Portfolio__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__Portfolio__c/a0P8d00000RELLC1"
+        },
+        "Id": "a0P8d00000RELLC1",
+        "Name": "Smith Real Estate LLC",
+        "SalenticaLMNTS__Relationship__c": "a0R8d00000Smith1",
+        "SalenticaLMNTS__Entity_Type__c": "Limited Liability Company",
+        "SalenticaLMNTS__AUM__c": 142500000,
+        "SalenticaLMNTS__Beneficiaries__c": "Smith Family Irrevocable Trust",
+        "SalenticaLMNTS__Jurisdiction__c": "Delaware",
+        "SalenticaLMNTS__Tax_ID_Masked__c": "**-***7781",
+        "SalenticaLMNTS__Formation_Date__c": "2014-02-18"
+      },
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__Portfolio__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__Portfolio__c/a0P8d00000Hold01"
+        },
+        "Id": "a0P8d00000Hold01",
+        "Name": "Smith Holdings LLC",
+        "SalenticaLMNTS__Relationship__c": "a0R8d00000Smith1",
+        "SalenticaLMNTS__Entity_Type__c": "Holding Company",
+        "SalenticaLMNTS__AUM__c": 135000000,
+        "SalenticaLMNTS__Beneficiaries__c": "Robert Smith; Margaret Smith",
+        "SalenticaLMNTS__Jurisdiction__c": "Wyoming",
+        "SalenticaLMNTS__Tax_ID_Masked__c": "**-***3355",
+        "SalenticaLMNTS__Formation_Date__c": "2016-09-09"
+      }
+    ]
+  },
+  "SalenticaLMNTS__FinancialAccount__c": {
+    "totalSize": 8,
+    "done": true,
+    "records": [
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__FinancialAccount__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__FinancialAccount__c/a0F8d00000Schw01"
+        },
+        "Id": "a0F8d00000Schw01",
+        "Name": "Schwab Brokerage",
+        "SalenticaLMNTS__Portfolio__c": "a0P8d00000Trust1",
+        "SalenticaLMNTS__Account_Type__c": "Brokerage",
+        "SalenticaLMNTS__Custodian__c": "Charles Schwab",
+        "SalenticaLMNTS__Market_Value__c": 88000000,
+        "SalenticaLMNTS__Account_Number__c": "****4821",
+        "SalenticaLMNTS__Liquidity__c": "Daily",
+        "SalenticaLMNTS__As_Of_Date__c": "2026-06-20"
+      },
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__FinancialAccount__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__FinancialAccount__c/a0F8d00000Alts01"
+        },
+        "Id": "a0F8d00000Alts01",
+        "Name": "Alts+ Fund",
+        "SalenticaLMNTS__Portfolio__c": "a0P8d00000Trust1",
+        "SalenticaLMNTS__Account_Type__c": "Alternative Investment",
+        "SalenticaLMNTS__Custodian__c": "iCapital Network",
+        "SalenticaLMNTS__Market_Value__c": 42000000,
+        "SalenticaLMNTS__Account_Number__c": "****ALT9",
+        "SalenticaLMNTS__Liquidity__c": "Quarterly (90-day notice)",
+        "SalenticaLMNTS__As_Of_Date__c": "2026-03-31"
+      },
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__FinancialAccount__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__FinancialAccount__c/a0F8d00000Fidl01"
+        },
+        "Id": "a0F8d00000Fidl01",
+        "Name": "Fidelity Managed Account",
+        "SalenticaLMNTS__Portfolio__c": "a0P8d00000Trust1",
+        "SalenticaLMNTS__Account_Type__c": "Managed Account",
+        "SalenticaLMNTS__Custodian__c": "Fidelity Investments",
+        "SalenticaLMNTS__Market_Value__c": 80000000,
+        "SalenticaLMNTS__Account_Number__c": "****7733",
+        "SalenticaLMNTS__Liquidity__c": "Daily",
+        "SalenticaLMNTS__As_Of_Date__c": "2026-06-20"
+      },
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__FinancialAccount__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__FinancialAccount__c/a0F8d00000JPM001"
+        },
+        "Id": "a0F8d00000JPM001",
+        "Name": "J.P. Morgan Private Bank",
+        "SalenticaLMNTS__Portfolio__c": "a0P8d00000RELLC1",
+        "SalenticaLMNTS__Account_Type__c": "Custody",
+        "SalenticaLMNTS__Custodian__c": "J.P. Morgan Private Bank",
+        "SalenticaLMNTS__Market_Value__c": 60000000,
+        "SalenticaLMNTS__Account_Number__c": "****1180",
+        "SalenticaLMNTS__Liquidity__c": "Daily",
+        "SalenticaLMNTS__As_Of_Date__c": "2026-06-20"
+      },
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__FinancialAccount__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__FinancialAccount__c/a0F8d00000Manh01"
+        },
+        "Id": "a0F8d00000Manh01",
+        "Name": "Manhattan Property Holdings",
+        "SalenticaLMNTS__Portfolio__c": "a0P8d00000RELLC1",
+        "SalenticaLMNTS__Account_Type__c": "Direct Real Estate",
+        "SalenticaLMNTS__Custodian__c": "Internal / Northern Trust",
+        "SalenticaLMNTS__Market_Value__c": 52500000,
+        "SalenticaLMNTS__Account_Number__c": "****RE21",
+        "SalenticaLMNTS__Liquidity__c": "Illiquid",
+        "SalenticaLMNTS__As_Of_Date__c": "2026-03-31"
+      },
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__FinancialAccount__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__FinancialAccount__c/a0F8d00000Aspn01"
+        },
+        "Id": "a0F8d00000Aspn01",
+        "Name": "Aspen Estate Holding",
+        "SalenticaLMNTS__Portfolio__c": "a0P8d00000RELLC1",
+        "SalenticaLMNTS__Account_Type__c": "Direct Real Estate",
+        "SalenticaLMNTS__Custodian__c": "Internal",
+        "SalenticaLMNTS__Market_Value__c": 30000000,
+        "SalenticaLMNTS__Account_Number__c": "****RE07",
+        "SalenticaLMNTS__Liquidity__c": "Illiquid",
+        "SalenticaLMNTS__As_Of_Date__c": "2026-03-31"
+      },
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__FinancialAccount__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__FinancialAccount__c/a0F8d00000GS0001"
+        },
+        "Id": "a0F8d00000GS0001",
+        "Name": "Goldman Sachs PWM",
+        "SalenticaLMNTS__Portfolio__c": "a0P8d00000Hold01",
+        "SalenticaLMNTS__Account_Type__c": "Brokerage",
+        "SalenticaLMNTS__Custodian__c": "Goldman Sachs",
+        "SalenticaLMNTS__Market_Value__c": 75000000,
+        "SalenticaLMNTS__Account_Number__c": "****9920",
+        "SalenticaLMNTS__Liquidity__c": "Daily",
+        "SalenticaLMNTS__As_Of_Date__c": "2026-06-20"
+      },
+      {
+        "attributes": {
+          "type": "SalenticaLMNTS__FinancialAccount__c",
+          "url": "/services/data/v59.0/sobjects/SalenticaLMNTS__FinancialAccount__c/a0F8d00000HLPE01"
+        },
+        "Id": "a0F8d00000HLPE01",
+        "Name": "Hamilton Lane Private Equity",
+        "SalenticaLMNTS__Portfolio__c": "a0P8d00000Hold01",
+        "SalenticaLMNTS__Account_Type__c": "Alternative Investment",
+        "SalenticaLMNTS__Custodian__c": "Hamilton Lane",
+        "SalenticaLMNTS__Market_Value__c": 60000000,
+        "SalenticaLMNTS__Account_Number__c": "****PE44",
+        "SalenticaLMNTS__Liquidity__c": "Locked (7-yr term)",
+        "SalenticaLMNTS__As_Of_Date__c": "2026-03-31"
+      }
+    ]
+  }
+}
