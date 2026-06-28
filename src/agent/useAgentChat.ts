@@ -11,6 +11,14 @@ interface ReplyMsg {
   blocked?: boolean
 }
 
+/** Pushed from the backend during a VOICE turn: move the map / raise approvals
+ *  without adding a text bubble (the spoken transcript comes from the voice SDK). */
+interface VoiceUiMsg {
+  type: 'voice_ui'
+  ui_actions?: UiAction[]
+  approvals?: Approval[]
+}
+
 /** Text path: a WebSocket to the FastAPI agent (`/ws/agent`). Drives the 3D map
  *  and surfaces approvals via the shared agent store. */
 export function useAgentChat() {
@@ -26,9 +34,14 @@ export function useAgentChat() {
     }
     wsRef.current = ws
     ws.onmessage = (ev) => {
-      const data = JSON.parse(ev.data) as ReplyMsg
-      if (data.type !== 'reply') return
+      const data = JSON.parse(ev.data) as ReplyMsg | VoiceUiMsg
       const store = useAgentStore.getState()
+      if (data.type === 'voice_ui') {
+        applyUiActions(data.ui_actions)
+        if (data.approvals?.length) store.addApprovals(data.approvals)
+        return
+      }
+      if (data.type !== 'reply') return
       store.addMessage('associate', data.reply, data.blocked)
       store.setStatus('idle')
       applyUiActions(data.ui_actions)

@@ -13,9 +13,12 @@ class ActionsPlugin:
 
     @kernel_function(
         description=(
-            "Request a sensitive action that changes money or ownership "
-            "(e.g. withdrawal, transfer, trade, beneficiary change, contacting the advisor). "
-            "This does NOT execute it — it asks the client to confirm on screen."
+            "Call this IMMEDIATELY whenever the client asks to move money, withdraw, transfer, "
+            "wire, buy or sell, rebalance, change a beneficiary, or take any action that changes "
+            "money or ownership. It does NOT execute anything — it places a confirmation card on "
+            "the client's screen for them to approve (human-in-the-loop). Do NOT ask the client "
+            "whether to create the confirmation; just call this. `kind` is a short label "
+            "(e.g. 'withdrawal', 'transfer', 'trade'); `details` restates the specifics."
         )
     )
     def request_action(self, kind: str, details: str) -> str:

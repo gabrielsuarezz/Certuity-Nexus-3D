@@ -8,6 +8,11 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     use_mock_llm: bool = True
+    llm_provider: str = "github"  # github (GitHub Models) | azure
+
+    github_models_token: str = ""
+    github_models_endpoint: str = "https://models.github.ai/inference"
+    github_models_model: str = "openai/gpt-4o-mini"
 
     azure_openai_endpoint: str = ""
     azure_openai_api_key: str = ""
@@ -31,6 +36,10 @@ class Settings(BaseSettings):
     @property
     def azure_openai_ready(self) -> bool:
         return bool(self.azure_openai_endpoint and self.azure_openai_api_key)
+
+    @property
+    def github_ready(self) -> bool:
+        return bool(self.github_models_token)
 
     @property
     def content_safety_ready(self) -> bool:

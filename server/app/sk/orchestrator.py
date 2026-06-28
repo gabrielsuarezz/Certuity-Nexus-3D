@@ -133,7 +133,12 @@ async def run_turn(message: str, history: list[dict] | None = None) -> dict:
     else:
         from app.sk.agent import sk_agent_turn
 
-        reply = await sk_agent_turn(message, history or [], repo, ctx)
+        try:
+            reply = await sk_agent_turn(message, history or [], repo, ctx)
+        except Exception as exc:  # live-demo safety net: never go dark on a rate limit/outage
+            audit.log("llm_error", error=repr(exc))
+            ctx = TurnContext()  # discard any partial tool state from the failed call
+            reply = mock_brain(message, repo, ctx)
 
     reply = redact(reply)
     audit.log("turn", user=message, reply=reply, ui=len(ctx.ui_actions), approvals=len(ctx.approvals))

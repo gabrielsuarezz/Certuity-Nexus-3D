@@ -11,6 +11,7 @@ from app.config import settings
 from app.data.repository import JsonRepository
 from app.guardrails import audit
 from app.llm.openai_compat import chat_completions
+from app.realtime import hub
 from app.sk.context import TurnContext
 from app.sk.orchestrator import run_turn
 from app.sk.plugins.actions import ActionsPlugin
@@ -52,6 +53,7 @@ def wealth_graph():
 @app.websocket("/ws/agent")
 async def ws_agent(ws: WebSocket):
     await ws.accept()
+    hub.join(ws)  # also receives voice-path UI pushes (map moves / approvals)
     history: list[dict] = []
     try:
         while True:
@@ -65,6 +67,8 @@ async def ws_agent(ws: WebSocket):
             await ws.send_text(json.dumps({"type": "reply", **result}))
     except WebSocketDisconnect:
         return
+    finally:
+        hub.leave(ws)
 
 
 # ── ElevenLabs server tools (read-only, client-scoped, audited) ───────────────
@@ -138,6 +142,11 @@ def decline(aid: str):
 
 
 # ── ElevenLabs custom LLM (guardrailed Azure OpenAI proxy) ────────────────────
+# ElevenLabs custom-LLM (guardrailed SK brain). Aliased so the agent's "Server URL"
+# can be set to .../llm/v1, .../llm, /v1, or the full path — all resolve here.
 @app.post("/llm/v1/chat/completions")
+@app.post("/llm/chat/completions")
+@app.post("/v1/chat/completions")
+@app.post("/chat/completions")
 async def llm(body: dict):
     return await chat_completions(body)

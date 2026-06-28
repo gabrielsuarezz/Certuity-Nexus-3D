@@ -1,13 +1,16 @@
 """OpenAI-compatible /v1/chat/completions for ElevenLabs' "custom LLM".
 
-ElevenLabs Conversational AI calls this as its LLM; we run an input injection
-guard, forward to Azure OpenAI (passing through any tools ElevenLabs defined),
-and redact output. Streams in OpenAI SSE format.
+ElevenLabs Conversational AI calls this as its LLM. Rather than a thin proxy, we
+run the SAME guardrailed Semantic Kernel brain the text path uses (`run_turn`):
+it grounds answers in the client's real portfolio, enforces injection/scope/PII
+guards, and gates actions behind human approval. Any map movements or approval
+cards the turn produces are pushed to the browser over its open /ws/agent socket
+(see app.realtime.hub), so the 3D map reacts live while the associate speaks.
+Responses are returned in OpenAI format (streaming SSE when requested).
 """
 
 from __future__ import annotations
 
-import asyncio
 import json
 import time
 import uuid
@@ -15,23 +18,42 @@ import uuid
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from app.config import settings
-from app.guardrails.content_safety import detect_injection
-from app.guardrails.redaction import redact
-
-REFUSAL = (
-    "I'm sorry, but I can't help with that — I can only assist with your own Certuity "
-    "portfolio. I'd be glad to connect you with your advisor if you'd like."
-)
+from app.realtime import hub
+from app.sk.orchestrator import run_turn
 
 
-def _last_user(messages: list[dict]) -> str:
-    for msg in reversed(messages):
-        if msg.get("role") == "user":
-            content = msg.get("content")
-            if isinstance(content, list):
-                return " ".join(p.get("text", "") for p in content if isinstance(p, dict))
-            return content or ""
-    return ""
+def _model_name() -> str:
+    return (
+        settings.azure_openai_deployment
+        if settings.llm_provider == "azure"
+        else settings.github_models_model
+    )
+
+
+def _flatten(content) -> str:
+    if isinstance(content, list):
+        return " ".join(p.get("text", "") for p in content if isinstance(p, dict))
+    return content or ""
+
+
+def _split(messages: list[dict]) -> tuple[str, list[dict]]:
+    """Split OpenAI-style messages into (latest user text, prior chat history)."""
+    last_user_idx = None
+    for i in range(len(messages) - 1, -1, -1):
+        if messages[i].get("role") == "user":
+            last_user_idx = i
+            break
+
+    user_text = ""
+    history: list[dict] = []
+    for i, msg in enumerate(messages):
+        role = msg.get("role")
+        text = _flatten(msg.get("content"))
+        if i == last_user_idx:
+            user_text = text
+        elif role in ("user", "assistant"):
+            history.append({"role": role, "content": text})
+    return user_text, history
 
 
 def _completion(text: str) -> dict:
@@ -39,61 +61,52 @@ def _completion(text: str) -> dict:
         "id": "chatcmpl-" + uuid.uuid4().hex[:12],
         "object": "chat.completion",
         "created": int(time.time()),
-        "model": settings.azure_openai_deployment,
+        "model": _model_name(),
         "choices": [{"index": 0, "message": {"role": "assistant", "content": text}, "finish_reason": "stop"}],
     }
 
 
-def _chunk(text: str, done: bool = False) -> dict:
+def _chunk(text: str, role: bool = False, done: bool = False) -> dict:
+    delta: dict = {}
+    if not done:
+        if role:
+            delta["role"] = "assistant"
+        delta["content"] = text
     return {
         "id": "chatcmpl-stream",
         "object": "chat.completion.chunk",
         "created": int(time.time()),
-        "model": settings.azure_openai_deployment,
-        "choices": [{"index": 0, "delta": ({} if done else {"content": text}), "finish_reason": ("stop" if done else None)}],
+        "model": _model_name(),
+        "choices": [{"index": 0, "delta": delta, "finish_reason": ("stop" if done else None)}],
     }
 
 
 async def chat_completions(body: dict):
     messages = body.get("messages", [])
-    tools = body.get("tools")
     stream = bool(body.get("stream"))
 
-    injection = await detect_injection(_last_user(messages))
-    if injection["flagged"]:
-        if stream:
-            def refusal_gen():
-                yield f"data: {json.dumps(_chunk(REFUSAL))}\n\n"
-                yield f"data: {json.dumps(_chunk('', done=True))}\n\n"
-                yield "data: [DONE]\n\n"
+    user_text, history = _split(messages)
 
-            return StreamingResponse(refusal_gen(), media_type="text/event-stream")
-        return JSONResponse(_completion(REFUSAL))
+    # Full guardrailed SK brain: grounding + injection/scope/PII guards + human-in-the-loop.
+    result = await run_turn(user_text, history)
+    reply = result["reply"]
 
-    from openai import AzureOpenAI
-
-    client = AzureOpenAI(
-        api_key=settings.azure_openai_api_key,
-        azure_endpoint=settings.azure_openai_endpoint,
-        api_version=settings.azure_openai_api_version,
-    )
-    kwargs: dict = {"model": settings.azure_openai_deployment, "messages": messages, "temperature": 0.3, "max_tokens": 600}
-    if tools:
-        kwargs["tools"] = tools
-        kwargs["tool_choice"] = body.get("tool_choice", "auto")
+    # Push any map actions / approvals to the browser's open socket → live 3D map during voice.
+    if result.get("ui_actions") or result.get("approvals"):
+        await hub.broadcast(
+            {
+                "type": "voice_ui",
+                "ui_actions": result.get("ui_actions", []),
+                "approvals": result.get("approvals", []),
+            }
+        )
 
     if stream:
         def gen():
-            for chunk in client.chat.completions.create(stream=True, **kwargs):
-                yield f"data: {json.dumps(chunk.model_dump())}\n\n"
+            yield f"data: {json.dumps(_chunk(reply, role=True))}\n\n"
+            yield f"data: {json.dumps(_chunk('', done=True))}\n\n"
             yield "data: [DONE]\n\n"
 
         return StreamingResponse(gen(), media_type="text/event-stream")
 
-    resp = await asyncio.to_thread(lambda: client.chat.completions.create(**kwargs))
-    data = resp.model_dump()
-    for choice in data.get("choices", []):
-        msg = choice.get("message") or {}
-        if msg.get("content"):
-            msg["content"] = redact(msg["content"])
-    return JSONResponse(data)
+    return JSONResponse(_completion(reply))
