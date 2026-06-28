@@ -5,6 +5,8 @@ import { useAgentChat } from './useAgentChat'
 import { useAgentVoice } from './useAgentVoice'
 import { VoiceSession } from './VoiceSession'
 import { ApprovalCard } from './ApprovalCard'
+import { config } from '@/config/env'
+import { ScenarioCard } from './ScenarioCard'
 
 const STATUS_LABEL: Record<AgentStatus, string> = {
   idle: 'Ready',
@@ -20,21 +22,49 @@ const SUGGESTIONS = [
   'Trace my Alts+ fund',
 ]
 
+interface BriefingItem {
+  kind: string
+  text: string
+}
+interface Briefing {
+  greeting: string
+  household: string
+  headline: string
+  change_pct: number
+  items: BriefingItem[]
+  speak: string
+}
+
+const ITEM_COLOR: Record<string, string> = {
+  concentration: '#d9a441',
+  liquidity: '#5fa8e6',
+  performance: '#46d39a',
+}
+
 /** The on-screen "private associate": text + voice, drives the 3D map, and
  *  surfaces human-in-the-loop approvals. */
 export function AgentDock() {
   const messages = useAgentStore((s) => s.messages)
   const approvals = useAgentStore((s) => s.approvals)
+  const scenario = useAgentStore((s) => s.scenario)
   const status = useAgentStore((s) => s.status)
   const { send } = useAgentChat()
   const { voiceEnabled, agentId } = useAgentVoice()
   const [text, setText] = useState('')
   const [open, setOpen] = useState(true)
+  const [briefing, setBriefing] = useState<Briefing | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    fetch(`${config.agentBaseUrl}/api/briefing`)
+      .then((r) => r.json())
+      .then((d: Briefing) => setBriefing(d))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
     scrollRef.current?.scrollTo({ top: 1e9, behavior: 'smooth' })
-  }, [messages.length, approvals.length])
+  }, [messages.length, approvals.length, scenario])
 
   const pending = approvals.filter((a) => a.status === 'pending')
 
@@ -81,7 +111,33 @@ export function AgentDock() {
               >
                 {messages.length === 0 && (
                   <div className="text-[12px] text-ink-muted">
-                    <p>Ask me anything about your portfolio. For example:</p>
+                    {briefing ? (
+                      <div className="mb-2.5 rounded-xl border border-white/[0.07] bg-white/[0.03] p-3">
+                        <div className="flex items-baseline justify-between gap-2">
+                          <p className="text-[12.5px] font-semibold text-ink">{briefing.greeting}</p>
+                          <span
+                            className="text-[11px] font-medium tabular-nums"
+                            style={{ color: briefing.change_pct >= 0 ? '#46d39a' : '#e5917c' }}
+                          >
+                            {briefing.change_pct >= 0 ? '▲' : '▼'} {Math.abs(briefing.change_pct)}% today
+                          </span>
+                        </div>
+                        <p className="mt-0.5 text-[11px] text-ink-faint">{briefing.headline}</p>
+                        <div className="mt-2 space-y-1.5">
+                          {briefing.items.map((it, i) => (
+                            <div key={i} className="flex items-start gap-2">
+                              <span
+                                className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full"
+                                style={{ background: ITEM_COLOR[it.kind] ?? '#8aa0b4' }}
+                              />
+                              <span className="text-[11.5px] leading-snug text-ink">{it.text}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p>Ask me anything about your portfolio. For example:</p>
+                    )}
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {SUGGESTIONS.map((s) => (
                         <button
@@ -110,6 +166,7 @@ export function AgentDock() {
                 {pending.map((a) => (
                   <ApprovalCard key={a.id} approval={a} />
                 ))}
+                {scenario && <ScenarioCard scenario={scenario} />}
               </div>
 
               <form onSubmit={submit} className="flex items-center gap-2 border-t border-white/[0.06] p-2.5">

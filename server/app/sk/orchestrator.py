@@ -7,12 +7,15 @@ so the text demo is fully functional with no API keys.
 
 from __future__ import annotations
 
+import re
+
 from app.config import settings
 from app.data.repository import JsonRepository
 from app.guardrails import audit
 from app.guardrails.authz import is_out_of_scope
 from app.guardrails.content_safety import detect_injection
 from app.guardrails.redaction import redact
+from app.scenario import simulate
 from app.sk.context import TurnContext
 from app.sk.persona import ADVISOR_NAME
 from app.sk.plugins.actions import ActionsPlugin
@@ -55,11 +58,54 @@ def _find_account(repo: JsonRepository, message: str):
     return None
 
 
+_WHATIF_WORDS = (
+    "what if", "what happens if", "what would happen", "simulate", "scenario",
+    "if i sold", "if i sell", "if i commit", "if i invest", "if i put", "if i add",
+)
+_AMT_RE = re.compile(r"\$?\s*([\d][\d,]*\.?\d*)\s*(billion|bn|million|mm|m|thousand|k)?\b", re.I)
+_MULT = {"k": 1e3, "thousand": 1e3, "m": 1e6, "mm": 1e6, "million": 1e6, "b": 1e9, "bn": 1e9, "billion": 1e9}
+
+
+def _parse_amount(text: str) -> float:
+    mt = _AMT_RE.search(text)
+    if not mt:
+        return 0.0
+    return float(mt.group(1).replace(",", "")) * _MULT.get((mt.group(2) or "").lower(), 1)
+
+
+def _mock_whatif(message: str, repo: JsonRepository, ctx: TurnContext) -> str:
+    m = message.lower()
+    action = "sell" if any(w in m for w in ("sell", "sold", "liquidat", "divest", "offload")) else "add"
+    amount = _parse_amount(message)
+    category = ""
+    for a in repo.list_accounts():
+        if a["name"].lower() in m:
+            category = a["name"]
+            break
+    if not category:
+        for kw in ("real estate", "propert", "alternativ", "alts", "private equity", "brokerage", "managed", "custody"):
+            if kw in m:
+                category = kw
+                break
+    res = simulate(repo, action, amount, category)
+    if not res.get("ok"):
+        return res.get("message", "Tell me an amount and a holding — e.g. 'what if I commit $5M to alternatives?'")
+    ctx.scenario = res["scenario"]
+    ctx.note("grounded", "Modeled what-if scenario")
+    if res.get("focus_id"):
+        ctx.act(action="focus", node_id=res["focus_id"])
+        ctx.note("map", "Highlighted affected holding")
+    return res["speak"] + " I've put the before-and-after on your screen — nothing has actually changed."
+
+
 def mock_brain(message: str, repo: JsonRepository, ctx: TurnContext) -> str:
     port = PortfolioPlugin(repo, ctx)
     viz = VisualizePlugin(repo, ctx)
     act = ActionsPlugin(ctx)
     m = message.lower().strip()
+
+    if any(w in m for w in _WHATIF_WORDS):
+        return _mock_whatif(message, repo, ctx)
 
     if any(w in m for w in _ACTION_WORDS):
         if any(w in m for w in ("withdraw", "wire", "send money")):
@@ -122,11 +168,23 @@ async def run_turn(message: str, history: list[dict] | None = None) -> dict:
     injection = await detect_injection(message)
     if injection["flagged"]:
         audit.log("blocked_injection", source=injection["source"], text=message)
-        return {"reply": SAFE_REFUSAL, "ui_actions": [], "approvals": [], "blocked": True}
+        return {
+            "reply": SAFE_REFUSAL,
+            "ui_actions": [],
+            "approvals": [],
+            "events": [{"kind": "blocked", "label": "Prompt-injection blocked"}],
+            "blocked": True,
+        }
 
     if is_out_of_scope(message):
         audit.log("out_of_scope", text=message)
-        return {"reply": SCOPE_DEFLECT, "ui_actions": [], "approvals": [], "blocked": False}
+        return {
+            "reply": SCOPE_DEFLECT,
+            "ui_actions": [],
+            "approvals": [],
+            "events": [{"kind": "scope", "label": "Out of scope — routed to advisor"}],
+            "blocked": False,
+        }
 
     if settings.use_mock_llm:
         reply = mock_brain(message, repo, ctx)
@@ -140,11 +198,16 @@ async def run_turn(message: str, history: list[dict] | None = None) -> dict:
             ctx = TurnContext()  # discard any partial tool state from the failed call
             reply = mock_brain(message, repo, ctx)
 
+    raw = reply
     reply = redact(reply)
+    if reply != raw:
+        ctx.note("redacted", "Sensitive details masked")
     audit.log("turn", user=message, reply=reply, ui=len(ctx.ui_actions), approvals=len(ctx.approvals))
     return {
         "reply": reply,
         "ui_actions": ctx.ui_actions,
         "approvals": ctx.approvals,
+        "events": ctx.events,
+        "scenario": ctx.scenario,
         "blocked": False,
     }

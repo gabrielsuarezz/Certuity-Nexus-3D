@@ -15,6 +15,7 @@ from app.sk.context import TurnContext
 from app.sk.persona import SYSTEM_PROMPT
 from app.sk.plugins.actions import ActionsPlugin
 from app.sk.plugins.portfolio import PortfolioPlugin
+from app.sk.plugins.scenario import ScenarioPlugin
 from app.sk.plugins.visualize import VisualizePlugin
 
 
@@ -69,6 +70,7 @@ async def sk_agent_turn(message: str, history: list[dict], repo, ctx: TurnContex
     kernel.add_service(service)
     kernel.add_plugin(PortfolioPlugin(repo, ctx), "portfolio")
     kernel.add_plugin(VisualizePlugin(repo, ctx), "map")
+    kernel.add_plugin(ScenarioPlugin(repo, ctx), "scenario")
     kernel.add_plugin(ActionsPlugin(ctx), "actions")
 
     chat = ChatHistory()

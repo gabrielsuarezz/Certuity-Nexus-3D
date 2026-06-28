@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from app import approvals
+from app.briefing import build_briefing
 from app.config import settings
 from app.data.repository import JsonRepository
 from app.guardrails import audit
@@ -41,6 +42,12 @@ def config():
         "voiceEnabled": bool(settings.elevenlabs_agent_id),
         "mockLlm": settings.use_mock_llm,
     }
+
+
+@app.get("/api/briefing")
+def briefing():
+    """Proactive opening briefing for the demo client (client-scoped)."""
+    return build_briefing(JsonRepository(settings.demo_client_id))
 
 
 @app.get("/api/wealth-graph")

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { config } from '@/config/env'
-import { useAgentStore, type Approval } from './agentStore'
+import { useAgentStore, type Approval, type SafeguardEvent, type Scenario } from './agentStore'
 import { applyUiActions, type UiAction } from './applyUiActions'
 
 interface ReplyMsg {
@@ -8,15 +8,20 @@ interface ReplyMsg {
   reply: string
   ui_actions?: UiAction[]
   approvals?: Approval[]
+  events?: Omit<SafeguardEvent, 'id'>[]
+  scenario?: Scenario | null
   blocked?: boolean
 }
 
-/** Pushed from the backend during a VOICE turn: move the map / raise approvals
- *  without adding a text bubble (the spoken transcript comes from the voice SDK). */
+/** Pushed from the backend during a VOICE turn: move the map / raise approvals /
+ *  log safeguards / project a what-if without adding a text bubble (the spoken
+ *  transcript comes from the voice SDK). */
 interface VoiceUiMsg {
   type: 'voice_ui'
   ui_actions?: UiAction[]
   approvals?: Approval[]
+  events?: Omit<SafeguardEvent, 'id'>[]
+  scenario?: Scenario | null
 }
 
 /** Text path: a WebSocket to the FastAPI agent (`/ws/agent`). Drives the 3D map
@@ -39,6 +44,8 @@ export function useAgentChat() {
       if (data.type === 'voice_ui') {
         applyUiActions(data.ui_actions)
         if (data.approvals?.length) store.addApprovals(data.approvals)
+        if (data.events?.length) store.addEvents(data.events)
+        if (data.scenario) store.setScenario(data.scenario)
         return
       }
       if (data.type !== 'reply') return
@@ -46,6 +53,8 @@ export function useAgentChat() {
       store.setStatus('idle')
       applyUiActions(data.ui_actions)
       if (data.approvals?.length) store.addApprovals(data.approvals)
+      if (data.events?.length) store.addEvents(data.events)
+      if (data.scenario) store.setScenario(data.scenario)
     }
     ws.onclose = () => {
       if (wsRef.current === ws) wsRef.current = null

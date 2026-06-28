@@ -24,6 +24,7 @@ class ActionsPlugin:
     def request_action(self, kind: str, details: str) -> str:
         rec = approvals.create(kind=kind, details=details)
         self.ctx.approvals.append(rec)
+        self.ctx.note("approval", f"Approval required: {kind}")
         return (
             f"I can't do that automatically, but I've placed a confirmation for '{kind}' "
             "on your screen. It will only proceed once you review and approve it — and your "

@@ -7,6 +7,7 @@ import { ErrorState } from '@/components/states/ErrorState'
 import { PrismScene } from '@/three/PrismScene'
 import { AgentDock } from '@/agent/AgentDock'
 import { AgentBoundary } from '@/agent/AgentBoundary'
+import { SafeguardsPanel } from '@/agent/SafeguardsPanel'
 import { DetailsPanel } from '@/components/DetailsPanel'
 import { useWealthData } from '@/hooks/useWealthData'
 import { useMockMarketData } from '@/hooks/useMockMarketData'
@@ -48,6 +49,7 @@ export default function App() {
               <PrismScene data={data} />
               <DetailsPanel />
               <AgentBoundary>
+                <SafeguardsPanel />
                 <AgentDock />
               </AgentBoundary>
             </>

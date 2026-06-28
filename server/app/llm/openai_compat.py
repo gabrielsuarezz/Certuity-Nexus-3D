@@ -92,12 +92,14 @@ async def chat_completions(body: dict):
     reply = result["reply"]
 
     # Push any map actions / approvals to the browser's open socket → live 3D map during voice.
-    if result.get("ui_actions") or result.get("approvals"):
+    if result.get("ui_actions") or result.get("approvals") or result.get("events") or result.get("scenario"):
         await hub.broadcast(
             {
                 "type": "voice_ui",
                 "ui_actions": result.get("ui_actions", []),
                 "approvals": result.get("approvals", []),
+                "events": result.get("events", []),
+                "scenario": result.get("scenario"),
             }
         )
 

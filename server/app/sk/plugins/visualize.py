@@ -1,6 +1,6 @@
-"""Tools that drive the on-screen 3D wealth map. They record UI actions on the
-turn context; the frontend applies them through the SAME store actions a click
-uses (select / look-through / overview)."""
+"""Tools that drive the on-screen 3D wealth map. They record UI actions (and a
+'map' safeguard event) on the turn context; the frontend applies them through the
+SAME store actions a click uses (select / look-through / overview)."""
 
 from app.sk._compat import kernel_function
 from app.sk.context import TurnContext
@@ -36,12 +36,14 @@ class VisualizePlugin:
         acct = self.repo.get_account(query)
         if acct:
             self.ctx.act(action="focus", node_id=acct["id"])
+            self.ctx.note("map", f"Highlighted {acct['name']}")
             return f"Highlighting {acct['name']} on your map."
 
         # entity match
         for e in self.repo.list_entities():
             if e["name"].lower() in q or q in e["name"].lower():
                 self.ctx.act(action="focus", node_id=e["id"])
+                self.ctx.note("map", f"Highlighted {e['name']}")
                 return f"Highlighting {e['name']} on your map."
 
         # category match -> focus the largest holding of that type
@@ -51,23 +53,28 @@ class VisualizePlugin:
                 if matches:
                     biggest = max(matches, key=lambda a: a["value"])
                     self.ctx.act(action="focus", node_id=biggest["id"])
+                    self.ctx.note("map", "Focused category on map")
                     label = "alternative investments" if category == "Alternative Investment" else category.lower()
                     return f"Showing your {label} on the map."
 
         # overview
         if any(w in q for w in ("everything", "overview", "all", "whole", "family office")):
             self.ctx.act(action="overview")
+            self.ctx.note("map", "Showing full portfolio")
             return "Showing your whole portfolio."
 
         self.ctx.act(action="overview")
+        self.ctx.note("map", "Showing overview")
         return "Showing your portfolio overview."
 
     @kernel_function(description="Turn the Look-Through Analyzer on or off.")
     def set_look_through(self, on: bool) -> str:
         self.ctx.act(action="setLookThrough", on=bool(on))
+        self.ctx.note("map", "Look-through toggled")
         return "Look-through is on." if on else "Look-through is off."
 
     @kernel_function(description="Reset the map to the full portfolio overview.")
     def show_overview(self) -> str:
         self.ctx.act(action="overview")
+        self.ctx.note("map", "Reset to overview")
         return "Here's your whole portfolio."

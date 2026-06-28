@@ -17,14 +17,39 @@ export interface Approval {
   status: string // pending | approved | declined
 }
 
+export type SafeguardKind = 'grounded' | 'map' | 'approval' | 'blocked' | 'scope' | 'redacted'
+
+export interface SafeguardEvent {
+  id: string
+  kind: SafeguardKind
+  label: string
+}
+
+export interface ScenarioMetric {
+  label: string
+  before: string
+  after: string
+  dir: 'up' | 'down' | 'flat'
+}
+
+export interface Scenario {
+  title: string
+  summary: string
+  metrics: ScenarioMetric[]
+}
+
 interface AgentState {
   messages: AgentMessage[]
   approvals: Approval[]
+  events: SafeguardEvent[]
+  scenario: Scenario | null
   status: AgentStatus
   addMessage: (role: AgentRole, text: string, blocked?: boolean) => void
   setStatus: (status: AgentStatus) => void
   addApprovals: (items: Approval[]) => void
   setApprovalStatus: (id: string, status: string) => void
+  addEvents: (items: Omit<SafeguardEvent, 'id'>[]) => void
+  setScenario: (scenario: Scenario | null) => void
 }
 
 const rid = () =>
@@ -35,6 +60,8 @@ const rid = () =>
 export const useAgentStore = create<AgentState>((set) => ({
   messages: [],
   approvals: [],
+  events: [],
+  scenario: null,
   status: 'idle',
   addMessage: (role, text, blocked) =>
     set((s) => ({ messages: [...s.messages, { id: rid(), role, text, blocked }] })),
@@ -46,4 +73,7 @@ export const useAgentStore = create<AgentState>((set) => ({
     }),
   setApprovalStatus: (id, status) =>
     set((s) => ({ approvals: s.approvals.map((a) => (a.id === id ? { ...a, status } : a)) })),
+  addEvents: (items) =>
+    set((s) => ({ events: [...s.events, ...items.map((e) => ({ id: rid(), ...e }))].slice(-24) })),
+  setScenario: (scenario) => set({ scenario }),
 }))
