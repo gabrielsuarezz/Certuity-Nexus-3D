@@ -7,6 +7,7 @@ import { VoiceSession } from './VoiceSession'
 import { ApprovalCard } from './ApprovalCard'
 import { config } from '@/config/env'
 import { ScenarioCard } from './ScenarioCard'
+import { DocumentCard } from './DocumentCard'
 
 const STATUS_LABEL: Record<AgentStatus, string> = {
   idle: 'Ready',
@@ -47,6 +48,7 @@ export function AgentDock() {
   const messages = useAgentStore((s) => s.messages)
   const approvals = useAgentStore((s) => s.approvals)
   const scenario = useAgentStore((s) => s.scenario)
+  const docResult = useAgentStore((s) => s.document)
   const status = useAgentStore((s) => s.status)
   const { send } = useAgentChat()
   const { voiceEnabled, agentId } = useAgentVoice()
@@ -54,6 +56,7 @@ export function AgentDock() {
   const [open, setOpen] = useState(true)
   const [briefing, setBriefing] = useState<Briefing | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetch(`${config.agentBaseUrl}/api/briefing`)
@@ -64,7 +67,7 @@ export function AgentDock() {
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 1e9, behavior: 'smooth' })
-  }, [messages.length, approvals.length, scenario])
+  }, [messages.length, approvals.length, scenario, docResult])
 
   const pending = approvals.filter((a) => a.status === 'pending')
 
@@ -73,6 +76,40 @@ export function AgentDock() {
     if (!text.trim()) return
     send(text)
     setText('')
+  }
+
+  const onFile = async (file: File | undefined) => {
+    if (!file) return
+    const store = useAgentStore.getState()
+    store.addMessage('user', `📎 ${file.name}`)
+    store.setStatus('thinking')
+    const fd = new FormData()
+    fd.append('file', file)
+    try {
+      const res = await fetch(`${config.agentBaseUrl}/api/document/analyze`, { method: 'POST', body: fd })
+      const d = await res.json()
+      store.setStatus('idle')
+      if (d.events?.length) store.addEvents(d.events)
+      if (!d.ok) {
+        store.addMessage('associate', d.message || 'I couldn’t read that document.')
+      } else if (d.blocked) {
+        store.setDocument(null)
+        store.addMessage('associate', d.summary, true)
+      } else {
+        store.setDocument(d)
+      }
+    } catch {
+      store.setStatus('idle')
+      store.addMessage('associate', 'I had trouble analyzing that document.')
+    }
+    if (fileRef.current) fileRef.current.value = ''
+  }
+
+  const loadSample = (path: string, name: string) => {
+    fetch(path)
+      .then((r) => r.blob())
+      .then((b) => onFile(new File([b], name, { type: 'application/pdf' })))
+      .catch(() => {})
   }
 
   return (
@@ -150,6 +187,25 @@ export function AgentDock() {
                         </button>
                       ))}
                     </div>
+                    <div className="mt-2.5 border-t border-white/[0.05] pt-2">
+                      <p className="mb-1.5 text-[10.5px] text-ink-faint">Or analyze a document:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => loadSample('/samples/capital-call.pdf', 'capital-call.pdf')}
+                          className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-ink transition hover:bg-white/[0.08]"
+                        >
+                          📄 Capital call notice
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => loadSample('/samples/suspicious-notice.pdf', 'suspicious-notice.pdf')}
+                          className="rounded-full border border-[#E5917C]/30 bg-[#E5917C]/[0.06] px-2.5 py-1 text-[11px] text-ink transition hover:bg-[#E5917C]/[0.12]"
+                        >
+                          ⚠ Suspicious document
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
                 {messages.map((m) => (
@@ -167,10 +223,22 @@ export function AgentDock() {
                   <ApprovalCard key={a.id} approval={a} />
                 ))}
                 {scenario && <ScenarioCard scenario={scenario} />}
+                {docResult && <DocumentCard doc={docResult} />}
               </div>
 
               <form onSubmit={submit} className="flex items-center gap-2 border-t border-white/[0.06] p-2.5">
                 {voiceEnabled && <VoiceSession agentId={agentId} />}
+                <input ref={fileRef} type="file" accept=".pdf,.txt" hidden onChange={(e) => onFile(e.target.files?.[0])} />
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  title="Upload a document"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-ink transition hover:bg-white/10"
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <path d="M21 12.5l-8.6 8.6a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l7.6-7.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
                 <input
                   value={text}
                   onChange={(e) => setText(e.target.value)}

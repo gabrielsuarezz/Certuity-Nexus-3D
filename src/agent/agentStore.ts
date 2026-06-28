@@ -38,11 +38,21 @@ export interface Scenario {
   metrics: ScenarioMetric[]
 }
 
+export interface DocumentResult {
+  filename: string
+  blocked?: boolean
+  doc_type?: string
+  summary: string
+  key_facts?: string[]
+  portfolio_note?: string
+}
+
 interface AgentState {
   messages: AgentMessage[]
   approvals: Approval[]
   events: SafeguardEvent[]
   scenario: Scenario | null
+  document: DocumentResult | null
   status: AgentStatus
   addMessage: (role: AgentRole, text: string, blocked?: boolean) => void
   setStatus: (status: AgentStatus) => void
@@ -50,6 +60,7 @@ interface AgentState {
   setApprovalStatus: (id: string, status: string) => void
   addEvents: (items: Omit<SafeguardEvent, 'id'>[]) => void
   setScenario: (scenario: Scenario | null) => void
+  setDocument: (document: DocumentResult | null) => void
 }
 
 const rid = () =>
@@ -62,6 +73,7 @@ export const useAgentStore = create<AgentState>((set) => ({
   approvals: [],
   events: [],
   scenario: null,
+  document: null,
   status: 'idle',
   addMessage: (role, text, blocked) =>
     set((s) => ({ messages: [...s.messages, { id: rid(), role, text, blocked }] })),
@@ -76,4 +88,5 @@ export const useAgentStore = create<AgentState>((set) => ({
   addEvents: (items) =>
     set((s) => ({ events: [...s.events, ...items.map((e) => ({ id: rid(), ...e }))].slice(-24) })),
   setScenario: (scenario) => set({ scenario }),
+  setDocument: (document) => set({ document }),
 }))
