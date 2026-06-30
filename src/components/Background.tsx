@@ -1,8 +1,10 @@
-/** Full-bleed ambient backdrop — deep navy with a soft azure top-glow, a faint
- *  masked grid, and a vignette. Calm and institutional (Certuity navy). */
+/** Full-bleed ambient backdrop — deep Certuity navy with soft azure/champagne
+ *  corner glows, a low-key aurora veil drifting near the top, and a vignette.
+ *  Calm, minimalist, and seamless on navy. */
 export function Background() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
+      {/* Navy base + established corner glows */}
       <div
         className="absolute inset-0"
         style={{
@@ -12,17 +14,38 @@ export function Background() {
             'linear-gradient(180deg, #0B1E36 0%, #081625 100%)',
         }}
       />
+
+      {/* Aurora — two blurred jade/teal light veils near the top that drift slowly
+          out of sync. Teal reads against the navy (azure was too close in hue to
+          show); `screen` blend keeps them luminous and seamless, not blobby. */}
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="wg-veil absolute"
         style={{
-          backgroundImage:
-            'linear-gradient(rgba(150,180,220,0.6) 1px, transparent 1px),' +
-            'linear-gradient(90deg, rgba(150,180,220,0.6) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-          maskImage: 'radial-gradient(circle at 50% 42%, black, transparent 80%)',
-          WebkitMaskImage: 'radial-gradient(circle at 50% 42%, black, transparent 80%)',
+          left: '-10%',
+          top: '-10%',
+          width: '76%',
+          height: '56%',
+          background:
+            'radial-gradient(58% 100% at 50% 50%, rgba(88,224,180,0.26), rgba(76,182,200,0.10) 44%, transparent 72%)',
+          filter: 'blur(46px)',
+          mixBlendMode: 'screen',
         }}
       />
+      <div
+        className="wg-veil-2 absolute"
+        style={{
+          right: '-12%',
+          top: '-14%',
+          width: '68%',
+          height: '58%',
+          background:
+            'radial-gradient(58% 100% at 50% 50%, rgba(112,206,212,0.18), rgba(84,168,206,0.07) 46%, transparent 72%)',
+          filter: 'blur(52px)',
+          mixBlendMode: 'screen',
+        }}
+      />
+
+      {/* Vignette */}
       <div
         className="absolute inset-0"
         style={{ boxShadow: 'inset 0 0 260px 70px rgba(2,8,20,0.72)' }}

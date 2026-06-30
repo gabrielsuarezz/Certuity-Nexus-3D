@@ -4,16 +4,23 @@ import type { MarketEventKind } from '@/types/market'
 import type { ModelType } from '@/lib/buildGraph3D'
 
 /**
- * Certuity-aligned palette: champagne-gold Family Office, pearl-platinum
- * entities, cool-pearl accounts — minted-metal icons on a deep-navy field.
+ * Certuity-aligned palette — a precious-metal & enamel jewel tone per asset
+ * type: a `body` metal, a brighter `accent`, and a "lit" `glow` for glass /
+ * gems / dials, on a deep-navy field. The Family Office stays champagne gold;
+ * every other type gets its own colour so the map reads rich instead of
+ * uniformly pearl-grey. Mirrored by the shape key in Legend.tsx.
  */
-export const TIER_COLOR: Record<NodeKind, string> = {
-  household: '#C9A86A', // champagne gold (family office)
-  portfolio: '#DAE3EF', // warm pearl (legal entities)
-  account: '#C4D2E2', // cool pearl (accounts)
+export const MODEL_PALETTE: Record<ModelType, { body: string; accent: string; glow: string }> = {
+  office: { body: '#C9A86A', accent: '#8A6526', glow: '#FFE6A8' }, // champagne gold + bronze trim
+  trust: { body: '#C08A4E', accent: '#E7C076', glow: '#FFD98A' }, // antique bronze + gilded mark
+  llc: { body: '#5E8FCB', accent: '#9CC4ED', glow: '#BFE6FF' }, // sapphire tower + lit glass
+  holding: { body: '#5C9AA8', accent: '#A6DBE0', glow: '#CFF1F4' }, // teal-steel cluster
+  brokerage: { body: '#3E9E84', accent: '#69D9B4', glow: '#9BFFDC' }, // emerald markets + jade bars
+  alternative: { body: '#E2C88C', accent: '#D6E9FF', glow: '#FFFFFF' }, // champagne girdle + icy diamond
+  managed: { body: '#D4AF62', accent: '#E9C97C', glow: '#FFE6A0' }, // warm gold coins
+  custody: { body: '#7C90A8', accent: '#BAC9DA', glow: '#D6E6F5' }, // platinum / gunmetal safe
+  real_estate: { body: '#CBA079', accent: '#C16A43', glow: '#FFCE8A' }, // sandstone + terracotta + lamplight
 }
-
-export const ALT_COLOR = '#E2C88C' // bright champagne — ties Alts+ to the flagship
 
 export const EVENT_COLOR: Record<MarketEventKind, string> = {
   surge: '#7FD9BE', // soft jade (up)
@@ -60,19 +67,6 @@ export function makeNodeMaterial(
   })
 }
 
-/** A small identifying accent color per asset type (helps tell them apart). */
-export const ACCENT_COLOR: Record<ModelType, string> = {
-  office: '#B8893C', // bronze trim
-  trust: '#B5825A', // copper Certuity mark
-  llc: '#6FA8D6', // azure glass
-  holding: '#6FA8D6', // azure
-  brokerage: '#5BD6B0', // jade (markets)
-  alternative: '#CFE6FF', // icy diamond
-  managed: '#E2C88C', // gold coins
-  custody: '#8FB0CC', // steel dial
-  real_estate: '#C98A5E', // terracotta roof
-}
-
 export function makeAccentMaterial(color: string, faceted = false): THREE.MeshPhysicalMaterial {
   return new THREE.MeshPhysicalMaterial({
     color,
@@ -83,6 +77,18 @@ export function makeAccentMaterial(color: string, faceted = false): THREE.MeshPh
     emissive: new THREE.Color(color),
     emissiveIntensity: 0.32,
     flatShading: faceted,
+  })
+}
+
+/** An emissive "lit" jewel — glass windows, vault dials, finials, gem tables.
+ *  Reads as internally-lit and catches a little of the scene's bloom. */
+export function makeGlowMaterial(color: string): THREE.MeshStandardMaterial {
+  return new THREE.MeshStandardMaterial({
+    color: new THREE.Color(color).multiplyScalar(0.35),
+    emissive: new THREE.Color(color),
+    emissiveIntensity: 1.0,
+    roughness: 0.3,
+    metalness: 0,
   })
 }
 

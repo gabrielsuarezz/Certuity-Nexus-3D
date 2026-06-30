@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { PerformanceMonitor } from '@react-three/drei'
+import { PerformanceMonitor, Environment, Lightformer } from '@react-three/drei'
 import * as THREE from 'three'
 import { buildGraph3D } from '@/lib/buildGraph3D'
 import { buildPositions } from './layout'
@@ -46,10 +46,29 @@ export function Scene({ data }: { data: WealthData }) {
     <>
       <AdaptivePerf />
 
-      <ambientLight intensity={0.5} color="#9fb4d4" />
-      <hemisphereLight args={['#3a5680', '#05080f', 0.5]} />
-      <directionalLight position={[40, 90, 60]} intensity={1.5} color="#dce8fa" />
-      <pointLight position={[-55, 45, -25]} intensity={0.6} color="#C9A86A" />
+      {/* Image-based reflections: gives the metal/clearcoat materials something to
+          reflect, so they read as minted metal & pearl instead of flat blobs.
+          background={false} → affects reflections only, not the visible (now
+          transparent) backdrop. Baked once; panels stay in the navy/gold palette. */}
+      <Environment resolution={256} frames={1} background={false}>
+        <color attach="background" args={['#0a1626']} />
+        {/* soft daylight top */}
+        <Lightformer form="rect" intensity={1.1} color="#eaf2ff" position={[0, 16, 4]} scale={[24, 24, 1]} />
+        {/* cool azure key, front-left */}
+        <Lightformer form="rect" intensity={1.5} color="#9fc2ec" position={[-18, 7, 16]} scale={[16, 12, 1]} />
+        {/* warm champagne rim, back-right */}
+        <Lightformer form="rect" intensity={1.3} color="#E8C48F" position={[18, 6, -14]} scale={[14, 12, 1]} />
+        {/* faint gold underglow off the floor */}
+        <Lightformer form="ring" intensity={0.6} color="#C9A86A" position={[0, -9, 8]} scale={11} />
+      </Environment>
+
+      <ambientLight intensity={0.32} color="#9fb4d4" />
+      <hemisphereLight args={['#3a5680', '#05080f', 0.42]} />
+      {/* cool key */}
+      <directionalLight position={[40, 90, 60]} intensity={1.3} color="#dce8fa" />
+      {/* warm champagne rim — breaks the all-blue cast and rakes the metal edges */}
+      <directionalLight position={[-70, 26, -48]} intensity={1.05} color="#E8C48F" />
+      <pointLight position={[-55, 45, -25]} intensity={0.5} color="#C9A86A" />
 
       <LightPool />
 

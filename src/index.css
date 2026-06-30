@@ -323,8 +323,47 @@
   }
 }
 
+/* Low-key aurora veils (Background.tsx) — slow, desynced drift; transform/opacity
+   only so they composite cheaply over the navy field. */
+.wg-veil,
+.wg-veil-2 {
+  will-change: transform, opacity;
+}
+.wg-veil {
+  animation: wg-veil 40s ease-in-out infinite;
+}
+.wg-veil-2 {
+  animation: wg-veil-2 52s ease-in-out infinite;
+}
+
+@keyframes wg-veil {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate3d(7%, -3%, 0) scale(1.12);
+    opacity: 1;
+  }
+}
+
+@keyframes wg-veil-2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.08);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(-6%, 2%, 0) scale(1);
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wg-node,
+  .wg-veil,
+  .wg-veil-2,
   .react-flow__edge * {
     animation: none !important;
     transition: none !important;

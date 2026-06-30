@@ -96,9 +96,9 @@ const ITEMS: {
   Glyph: (p: { c: string }) => JSX.Element
 }[] = [
   { type: 'office', label: 'Family Office', color: '#C9A86A', Glyph: Office },
-  { type: 'trust', label: 'Trust', color: '#C7D4E2', Glyph: Shield },
+  { type: 'trust', label: 'Trust', color: '#D2A45E', Glyph: Shield },
   { type: 'llc', label: 'LLC', color: '#6FA8D6', Glyph: Tower },
-  { type: 'holding', label: 'Holding Co.', color: '#8FB6DA', Glyph: Stacked },
+  { type: 'holding', label: 'Holding Co.', color: '#74C0CC', Glyph: Stacked },
   { type: 'brokerage', label: 'Brokerage', color: '#5BD6B0', Glyph: Bars },
   { type: 'alternative', label: 'Alternatives', color: '#CFE6FF', Glyph: Gem },
   { type: 'managed', label: 'Managed', color: '#E2C88C', Glyph: Coins },

@@ -1,13 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAgentStore, type AgentStatus } from './agentStore'
 import { useAgentChat } from './useAgentChat'
 import { useAgentVoice } from './useAgentVoice'
-import { VoiceSession } from './VoiceSession'
 import { ApprovalCard } from './ApprovalCard'
 import { config } from '@/config/env'
 import { ScenarioCard } from './ScenarioCard'
 import { DocumentCard } from './DocumentCard'
+
+// Voice pulls in the heavy ElevenLabs SDK — code-split it so it loads only when
+// voice is actually enabled, keeping it out of the initial bundle.
+const VoiceSession = lazy(() =>
+  import('./VoiceSession').then((m) => ({ default: m.VoiceSession })),
+)
 
 const STATUS_LABEL: Record<AgentStatus, string> = {
   idle: 'Ready',
@@ -227,7 +232,11 @@ export function AgentDock() {
               </div>
 
               <form onSubmit={submit} className="flex items-center gap-2 border-t border-white/[0.06] p-2.5">
-                {voiceEnabled && <VoiceSession agentId={agentId} />}
+                {voiceEnabled && (
+                  <Suspense fallback={null}>
+                    <VoiceSession agentId={agentId} />
+                  </Suspense>
+                )}
                 <input ref={fileRef} type="file" accept=".pdf,.txt" hidden onChange={(e) => onFile(e.target.files?.[0])} />
                 <button
                   type="button"

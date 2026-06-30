@@ -73,11 +73,12 @@ const PLUS = (() => {
 type Mat = THREE.Material
 
 /**
- * Detailed, double-sided minted-metal icon per asset type. `m` is the tier metal
- * (gold/pearl); `a` is the identifying accent. All meshes share these two
- * materials so the pulse animates uniformly.
+ * Detailed, double-sided minted-metal icon per asset type. `m` is the body metal,
+ * `a` the identifying accent, and `g` an emissive "lit" jewel (glass, dials,
+ * finials, gems) for extra detail. Meshes share these materials so the pulse
+ * animates uniformly.
  */
-export function NodeModel({ modelType, m, a }: { modelType: ModelType; m: Mat; a: Mat }) {
+export function NodeModel({ modelType, m, a, g }: { modelType: ModelType; m: Mat; a: Mat; g: Mat }) {
   switch (modelType) {
     // ── Family Office: classical bank, symmetric front/back ──
     case 'office': {
@@ -97,7 +98,7 @@ export function NodeModel({ modelType, m, a }: { modelType: ModelType; m: Mat; a
           {columns}
           <mesh geometry={BOX} material={m} position={[0, 0.5, 0]} scale={[1.8, 0.16, 0.95]} />
           <mesh geometry={GABLE} material={m} position={[0, 0.58, 0]} scale={[1.5, 0.5, 0.97]} />
-          <mesh geometry={SPHERE} material={a} position={[0, 0.96, 0]} scale={0.13} />
+          <mesh geometry={SPHERE} material={g} position={[0, 0.96, 0]} scale={0.13} />
           <mesh geometry={BOX} material={a} position={[0, -0.36, 0.47]} scale={[0.34, 0.55, 0.06]} />
           <mesh geometry={BOX} material={a} position={[0, -0.36, -0.47]} scale={[0.34, 0.55, 0.06]} />
         </group>
@@ -111,8 +112,8 @@ export function NodeModel({ modelType, m, a }: { modelType: ModelType; m: Mat; a
           <mesh geometry={SHIELD} material={m} />
           <mesh geometry={SHIELD} material={m} position={[0, 0, 0.16]} scale={[0.78, 0.78, 0.5]} />
           <mesh geometry={SHIELD} material={m} position={[0, 0, -0.16]} scale={[0.78, 0.78, 0.5]} />
-          <mesh geometry={PLUS} material={a} position={[0, 0.08, 0.3]} scale={0.82} />
-          <mesh geometry={PLUS} material={a} position={[0, 0.08, -0.3]} scale={0.82} />
+          <mesh geometry={PLUS} material={g} position={[0, 0.08, 0.3]} scale={0.82} />
+          <mesh geometry={PLUS} material={g} position={[0, 0.08, -0.3]} scale={0.82} />
           {[
             [-0.5, 0.55],
             [0.5, 0.55],
@@ -130,7 +131,7 @@ export function NodeModel({ modelType, m, a }: { modelType: ModelType; m: Mat; a
         <group>
           <mesh geometry={BOX} material={m} position={[0, -0.1, 0]} scale={[0.82, 1.7, 0.82]} />
           {[-0.55, -0.2, 0.15, 0.5].map((y, i) => (
-            <mesh key={i} geometry={BOX} material={a} position={[0, y, 0]} scale={[0.85, 0.06, 0.85]} />
+            <mesh key={i} geometry={BOX} material={g} position={[0, y, 0]} scale={[0.85, 0.06, 0.85]} />
           ))}
           <mesh geometry={BOX} material={m} position={[0, 0.86, 0]} scale={[0.5, 0.32, 0.5]} />
           <mesh geometry={CYL} material={a} position={[0, 1.22, 0]} scale={[0.05, 0.55, 0.05]} />
@@ -146,8 +147,8 @@ export function NodeModel({ modelType, m, a }: { modelType: ModelType; m: Mat; a
           <mesh geometry={BOX} material={m} position={[0.12, 0.15, -0.15]} scale={[0.44, 1.45, 0.44]} />
           <mesh geometry={BOX} material={m} position={[0.52, -0.1, 0.2]} scale={[0.36, 0.85, 0.36]} />
           <mesh geometry={CYL} material={a} position={[0.12, 0.98, -0.15]} scale={[0.04, 0.3, 0.04]} />
-          <mesh geometry={SPHERE} material={a} position={[-0.45, 0.5, 0.1]} scale={0.1} />
-          <mesh geometry={SPHERE} material={a} position={[0.52, 0.37, 0.2]} scale={0.09} />
+          <mesh geometry={SPHERE} material={g} position={[-0.45, 0.5, 0.1]} scale={0.1} />
+          <mesh geometry={SPHERE} material={g} position={[0.52, 0.37, 0.2]} scale={0.09} />
         </group>
       )
 
@@ -159,7 +160,7 @@ export function NodeModel({ modelType, m, a }: { modelType: ModelType; m: Mat; a
           <mesh geometry={BOX} material={a} position={[-0.45, -0.28, 0]} scale={[0.3, 0.62, 0.3]} />
           <mesh geometry={BOX} material={a} position={[0, -0.02, 0]} scale={[0.3, 1.14, 0.3]} />
           <mesh geometry={BOX} material={a} position={[0.45, 0.26, 0]} scale={[0.3, 1.7, 0.3]} />
-          <mesh geometry={DIAMOND_PAVILION} material={a} position={[0.45, 1.32, 0]} scale={[0.32, 0.34, 0.32]} />
+          <mesh geometry={DIAMOND_PAVILION} material={g} position={[0.45, 1.32, 0]} scale={[0.32, 0.34, 0.32]} />
         </group>
       )
 
@@ -194,7 +195,7 @@ export function NodeModel({ modelType, m, a }: { modelType: ModelType; m: Mat; a
               scale={[1.0, 0.12, 1.0]}
             />
           ))}
-          <mesh geometry={CYL} material={m} position={[0, 0.41, 0]} scale={[0.42, 0.14, 0.42]} />
+          <mesh geometry={CYL} material={g} position={[0, 0.41, 0]} scale={[0.42, 0.14, 0.42]} />
         </group>
       )
 
@@ -203,7 +204,7 @@ export function NodeModel({ modelType, m, a }: { modelType: ModelType; m: Mat; a
       const door = (z: number, sign: number, key: string) => (
         <group key={key}>
           <mesh geometry={CYL} material={m} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, z]} scale={[1.0, 0.06, 1.0]} />
-          <mesh geometry={TORUS} material={a} position={[0, 0, z + sign * 0.06]} />
+          <mesh geometry={TORUS} material={g} position={[0, 0, z + sign * 0.06]} />
           {[0, 1, 2, 3].map((i) => (
             <mesh
               key={i}
@@ -241,7 +242,7 @@ export function NodeModel({ modelType, m, a }: { modelType: ModelType; m: Mat; a
           <mesh geometry={SPHERE} material={m} position={[0.08, -0.45, z + Math.sign(z) * 0.02]} scale={0.04} />
           {[-0.3, 0.3].map((x, i) => (
             <group key={i}>
-              <mesh geometry={BOX} material={m} position={[x, -0.16, z]} scale={[0.22, 0.22, 0.04]} />
+              <mesh geometry={BOX} material={g} position={[x, -0.16, z]} scale={[0.22, 0.22, 0.04]} />
               <mesh geometry={BOX} material={a} position={[x, -0.16, z + Math.sign(z) * 0.01]} scale={[0.04, 0.22, 0.05]} />
               <mesh geometry={BOX} material={a} position={[x, -0.16, z + Math.sign(z) * 0.01]} scale={[0.22, 0.04, 0.05]} />
             </group>

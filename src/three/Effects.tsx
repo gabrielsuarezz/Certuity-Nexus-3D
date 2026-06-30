@@ -1,9 +1,10 @@
-import { EffectComposer, Bloom } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 
 /**
  * Restrained Bloom — a soft institutional glow, not a neon haze. The raised
  * threshold means only the brightest highlights bloom; `mipmapBlur` keeps it
- * cheap. MSAA/normal pass are off (Canvas runs antialias:false).
+ * cheap. MSAA/normal pass are off (Canvas runs antialias:false). A gentle
+ * Vignette darkens the corners to focus the eye on the constellation.
  */
 export function Effects() {
   return (
@@ -15,6 +16,7 @@ export function Effects() {
         luminanceSmoothing={0.2}
         radius={0.5}
       />
+      <Vignette offset={0.32} darkness={0.5} eskil={false} />
     </EffectComposer>
   )
 }

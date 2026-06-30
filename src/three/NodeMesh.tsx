@@ -3,14 +3,13 @@ import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { Billboard, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import {
-  ACCENT_COLOR,
-  ALT_COLOR,
   BASE_EMISSIVE,
   EVENT_COLOR,
   GHOST_MATERIAL,
-  TIER_COLOR,
+  MODEL_PALETTE,
   TIER_SCALE,
   makeAccentMaterial,
+  makeGlowMaterial,
   makeNodeMaterial,
 } from './materials'
 import { NodeModel } from './models'
@@ -33,13 +32,15 @@ export function NodeMesh({ node, index }: { node: Graph3DNode; index: number }) 
   const ghostRef = useRef<THREE.Group>(null)
 
   const faceted = node.modelType === 'alternative'
-  const color = node.isAlt ? ALT_COLOR : TIER_COLOR[node.kind]
+  const palette = MODEL_PALETTE[node.modelType]
+  const color = palette.body
   const baseColor = useMemo(() => new THREE.Color(color), [color])
   const material = useMemo(() => makeNodeMaterial(color, node.kind, faceted), [color, node.kind, faceted])
   const accentMaterial = useMemo(
-    () => makeAccentMaterial(ACCENT_COLOR[node.modelType], faceted),
-    [node.modelType, faceted],
+    () => makeAccentMaterial(palette.accent, faceted),
+    [palette.accent, faceted],
   )
+  const glowMaterial = useMemo(() => makeGlowMaterial(palette.glow), [palette.glow])
   const tierScale = TIER_SCALE[node.kind]
   const baseEmissive = BASE_EMISSIVE[node.kind]
   const accent = node.isAlt || node.kind === 'household' ? '#E2C88C' : '#C7D4E2'
@@ -120,6 +121,8 @@ export function NodeMesh({ node, index }: { node: Graph3DNode; index: number }) 
     material.opacity = dimmed ? 0.4 : 1
     accentMaterial.transparent = dimmed
     accentMaterial.opacity = dimmed ? 0.4 : 1
+    glowMaterial.transparent = dimmed
+    glowMaterial.opacity = dimmed ? 0.4 : 1
 
     if (animating) invalidate()
   })
@@ -144,12 +147,12 @@ export function NodeMesh({ node, index }: { node: Graph3DNode; index: number }) 
   return (
     <group position={[node.x, 0, node.z]}>
       <group ref={scaleRef} onClick={onClick} onPointerOver={onOver} onPointerOut={onOut}>
-        <NodeModel modelType={node.modelType} m={material} a={accentMaterial} />
+        <NodeModel modelType={node.modelType} m={material} a={accentMaterial} g={glowMaterial} />
       </group>
 
       {/* Mirrored reflection ghost (no labels), below the floor line. */}
       <group ref={ghostRef} position={[0, 2 * FLOOR_Y, 0]}>
-        <NodeModel modelType={node.modelType} m={GHOST_MATERIAL} a={GHOST_MATERIAL} />
+        <NodeModel modelType={node.modelType} m={GHOST_MATERIAL} a={GHOST_MATERIAL} g={GHOST_MATERIAL} />
       </group>
 
       <Billboard position={[0, labelY, 0]}>

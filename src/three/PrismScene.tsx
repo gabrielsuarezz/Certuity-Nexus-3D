@@ -21,9 +21,12 @@ export function PrismScene({ data }: { data: WealthData }) {
         frameloop="always"
         dpr={[1, 1.5]}
         camera={{ position: [0, 58, 116], fov: 48, near: 0.1, far: 2000 }}
-        gl={{ antialias: false, powerPreference: 'high-performance', stencil: false }}
+        gl={{ antialias: false, powerPreference: 'high-performance', stencil: false, alpha: true }}
+        onCreated={({ gl }) => gl.setClearAlpha(0)}
       >
-        <color attach="background" args={['#0B1E36']} />
+        {/* Transparent canvas — no <color> background — so the layered CSS backdrop
+            (azure/gold glow, masked grid, vignette) in <Background/> shows through and
+            gives the scene depth. Fog still fades distant nodes into the same navy. */}
         <fog attach="fog" args={['#0B1E36', 150, 420]} />
         <Scene key={data.household.Id} data={data} />
       </Canvas>
