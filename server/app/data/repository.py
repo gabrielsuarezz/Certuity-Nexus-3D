@@ -158,3 +158,21 @@ class JsonRepository(WealthRepository):
         total = sum(a["value"] for a in accts) or 1
         weighted = round(sum(a["value"] * a["ytd_return_pct"] for a in accts) / total, 1)
         return {"portfolio_ytd_return_pct": weighted, "by_account": accts}
+
+
+def make_repository(client_id: str) -> WealthRepository:
+    """Return the configured data source: live Salesforce, or the bundled JSON."""
+    from app.config import settings
+
+    if settings.data_source == "salesforce" and settings.sf_consumer_key and settings.sf_instance_url:
+        from app.data.salesforce_repo import SalesforceRepository
+
+        try:
+            return SalesforceRepository(client_id)
+        except PermissionError:
+            raise  # client-scoping is a security boundary — never silently bypass it
+        except Exception:  # live-demo safety net: fall back to bundled data on any CRM hiccup
+            from app.guardrails import audit
+
+            audit.log("salesforce_fallback")
+    return JsonRepository(client_id)

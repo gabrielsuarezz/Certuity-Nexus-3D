@@ -10,7 +10,7 @@ from app import approvals
 from app.briefing import build_briefing
 from app.config import settings
 from app.documents import analyze_document
-from app.data.repository import JsonRepository
+from app.data.repository import make_repository
 from app.guardrails import audit
 from app.llm.openai_compat import chat_completions
 from app.realtime import hub
@@ -33,7 +33,7 @@ app.add_middleware(
 
 @app.get("/healthz")
 def healthz():
-    return {"ok": True, "mock_llm": settings.use_mock_llm}
+    return {"ok": True, "mock_llm": settings.use_mock_llm, "data_source": settings.data_source}
 
 
 @app.get("/api/config")
@@ -48,14 +48,14 @@ def config():
 @app.get("/api/briefing")
 def briefing():
     """Proactive opening briefing for the demo client (client-scoped)."""
-    return build_briefing(JsonRepository(settings.demo_client_id))
+    return build_briefing(make_repository(settings.demo_client_id))
 
 
 @app.post("/api/document/analyze")
 async def analyze_doc(file: UploadFile = File(...)):
     """Sanitize, injection-screen, and summarize an uploaded client document."""
     data = await file.read()
-    repo = JsonRepository(settings.demo_client_id)
+    repo = make_repository(settings.demo_client_id)
     return await analyze_document(data, file.filename or "document", repo)
 
 
@@ -89,7 +89,7 @@ async def ws_agent(ws: WebSocket):
 
 # ── ElevenLabs server tools (read-only, client-scoped, audited) ───────────────
 def _portfolio() -> PortfolioPlugin:
-    return PortfolioPlugin(JsonRepository(settings.demo_client_id), TurnContext())
+    return PortfolioPlugin(make_repository(settings.demo_client_id), TurnContext())
 
 
 class NameIn(BaseModel):

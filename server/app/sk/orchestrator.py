@@ -10,7 +10,7 @@ from __future__ import annotations
 import re
 
 from app.config import settings
-from app.data.repository import JsonRepository
+from app.data.repository import WealthRepository, make_repository
 from app.guardrails import audit
 from app.guardrails.authz import is_out_of_scope
 from app.guardrails.content_safety import detect_injection
@@ -45,7 +45,7 @@ _ACCOUNT_KEYWORDS = {
 }
 
 
-def _find_account(repo: JsonRepository, message: str):
+def _find_account(repo: WealthRepository, message: str):
     m = message.lower()
     for a in repo.list_accounts():
         if a["name"].lower() in m:
@@ -73,7 +73,7 @@ def _parse_amount(text: str) -> float:
     return float(mt.group(1).replace(",", "")) * _MULT.get((mt.group(2) or "").lower(), 1)
 
 
-def _mock_whatif(message: str, repo: JsonRepository, ctx: TurnContext) -> str:
+def _mock_whatif(message: str, repo: WealthRepository, ctx: TurnContext) -> str:
     m = message.lower()
     action = "sell" if any(w in m for w in ("sell", "sold", "liquidat", "divest", "offload")) else "add"
     amount = _parse_amount(message)
@@ -98,7 +98,7 @@ def _mock_whatif(message: str, repo: JsonRepository, ctx: TurnContext) -> str:
     return res["speak"] + " I've put the before-and-after on your screen — nothing has actually changed."
 
 
-def mock_brain(message: str, repo: JsonRepository, ctx: TurnContext) -> str:
+def mock_brain(message: str, repo: WealthRepository, ctx: TurnContext) -> str:
     port = PortfolioPlugin(repo, ctx)
     viz = VisualizePlugin(repo, ctx)
     act = ActionsPlugin(ctx)
@@ -162,7 +162,7 @@ def mock_brain(message: str, repo: JsonRepository, ctx: TurnContext) -> str:
 
 
 async def run_turn(message: str, history: list[dict] | None = None) -> dict:
-    repo = JsonRepository(settings.demo_client_id)
+    repo = make_repository(settings.demo_client_id)
     ctx = TurnContext()
 
     injection = await detect_injection(message)

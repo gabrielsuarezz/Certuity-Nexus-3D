@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     demo_client_id: str = "a0R8d00000Smith1"
     audit_log_path: str = "audit.log.jsonl"
 
+    # Data source — json (bundled mock) | salesforce (live CRM via OAuth client credentials)
+    data_source: str = "json"
+    sf_consumer_key: str = ""
+    sf_consumer_secret: str = ""
+    sf_instance_url: str = ""
+
     @property
     def origins(self) -> list[str]:
         return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]

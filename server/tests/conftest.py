@@ -14,3 +14,4 @@ from app.config import settings
 @pytest.fixture(autouse=True)
 def _force_mock_llm(monkeypatch):
     monkeypatch.setattr(settings, "use_mock_llm", True)
+    monkeypatch.setattr(settings, "data_source", "json")
