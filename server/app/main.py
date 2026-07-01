@@ -31,6 +31,23 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+async def _warm_semantic_kernel() -> None:
+    """Pre-import the heavy Semantic Kernel modules at startup so the FIRST live
+    turn isn't stalled by a multi-second import — which could otherwise make
+    ElevenLabs drop the very first voice call on a freshly deployed container."""
+    if settings.use_mock_llm:
+        return
+    try:
+        import semantic_kernel  # noqa: F401
+        from semantic_kernel import Kernel  # noqa: F401
+        from semantic_kernel.connectors.ai import FunctionChoiceBehavior  # noqa: F401
+        from semantic_kernel.connectors.ai.open_ai import OpenAIChatCompletion  # noqa: F401
+        from semantic_kernel.contents import ChatHistory  # noqa: F401
+    except Exception:
+        pass
+
+
 @app.get("/healthz")
 def healthz():
     return {"ok": True, "mock_llm": settings.use_mock_llm, "data_source": settings.data_source}
