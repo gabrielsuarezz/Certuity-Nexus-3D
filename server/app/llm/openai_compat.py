@@ -11,6 +11,7 @@ Responses are returned in OpenAI format (streaming SSE when requested).
 
 from __future__ import annotations
 
+import asyncio
 import json
 import time
 import uuid
@@ -81,17 +82,10 @@ def _chunk(text: str, role: bool = False, done: bool = False) -> dict:
     }
 
 
-async def chat_completions(body: dict):
-    messages = body.get("messages", [])
-    stream = bool(body.get("stream"))
-
-    user_text, history = _split(messages)
-
-    # Full guardrailed SK brain: grounding + injection/scope/PII guards + human-in-the-loop.
+async def _run(user_text: str, history: list[dict]) -> str:
+    """Run the guardrailed brain and push any map/approval side effects to the
+    browser's open socket, so the 3D map reacts live during a voice turn."""
     result = await run_turn(user_text, history)
-    reply = result["reply"]
-
-    # Push any map actions / approvals to the browser's open socket → live 3D map during voice.
     if result.get("ui_actions") or result.get("approvals") or result.get("events") or result.get("scenario"):
         await hub.broadcast(
             {
@@ -102,13 +96,33 @@ async def chat_completions(body: dict):
                 "scenario": result.get("scenario"),
             }
         )
+    return result["reply"]
+
+
+async def chat_completions(body: dict):
+    messages = body.get("messages", [])
+    stream = bool(body.get("stream"))
+    user_text, history = _split(messages)
 
     if stream:
-        def gen():
-            yield f"data: {json.dumps(_chunk(reply, role=True))}\n\n"
+        async def gen():
+            # Open the stream immediately, then send a tiny keep-alive every second
+            # while the brain works (it may call tools and take a few seconds).
+            # Without this, ElevenLabs' streaming timeout fires and the voice call
+            # drops — the mic "turns off" mid-turn.
+            yield f"data: {json.dumps(_chunk('', role=True))}\n\n"
+            task = asyncio.create_task(_run(user_text, history))
+            while True:
+                done, _pending = await asyncio.wait({task}, timeout=1.0)
+                if done:
+                    break
+                yield f"data: {json.dumps(_chunk(''))}\n\n"
+            reply = task.result()
+            yield f"data: {json.dumps(_chunk(reply))}\n\n"
             yield f"data: {json.dumps(_chunk('', done=True))}\n\n"
             yield "data: [DONE]\n\n"
 
         return StreamingResponse(gen(), media_type="text/event-stream")
 
+    reply = await _run(user_text, history)
     return JSONResponse(_completion(reply))
