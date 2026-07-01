@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from app.config import settings
 from app.sk.context import TurnContext
-from app.sk.persona import SYSTEM_PROMPT
+from app.sk.persona import system_prompt
 from app.sk.plugins.actions import ActionsPlugin
 from app.sk.plugins.market import MarketPlugin
 from app.sk.plugins.portfolio import PortfolioPlugin
@@ -78,7 +78,7 @@ async def sk_agent_turn(message: str, history: list[dict], repo, ctx: TurnContex
     kernel.add_plugin(SearchPlugin(ctx), "research")
 
     chat = ChatHistory()
-    chat.add_system_message(SYSTEM_PROMPT)
+    chat.add_system_message(system_prompt())
     for turn in (history or [])[-8:]:
         if turn.get("role") == "user":
             chat.add_user_message(turn.get("content", ""))
