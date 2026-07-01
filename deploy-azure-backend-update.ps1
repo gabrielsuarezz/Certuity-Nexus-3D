@@ -37,6 +37,9 @@ Get-Content $EnvFile | ForEach-Object {
 }
 $envVars['USE_MOCK_LLM']   = 'false'
 $envVars['AUDIT_LOG_PATH'] = '/tmp/audit.log.jsonl'
+# Keep the deployed Vercel origin trusted (server/.env only lists localhost), so a
+# redeploy never regresses CORS for the live site.
+$envVars['ALLOWED_ORIGINS'] = 'https://certuity-nexus-3-d.vercel.app,http://localhost:5173,http://127.0.0.1:5173'
 
 $secretArgs = @()
 $envArgs    = @()
