@@ -54,11 +54,28 @@ foreach ($k in $envVars.Keys) {
 Write-Host "Syncing $($secretArgs.Count) secrets..." -ForegroundColor Cyan
 az containerapp secret set --name $App --resource-group $Rg --secrets $secretArgs | Out-Null
 
-# A fresh revision suffix guarantees a new revision that re-pulls :latest (the
-# image the GitHub Action just built) and applies the env vars.
+# Resolve :latest to an immutable digest so Azure pulls the FRESHLY-built image.
+# Azure Container Apps caches the :latest tag and won't re-pull it on its own,
+# silently leaving the old image running. Falls back to the tag if lookup fails.
+$ImageRef = $Image
+try {
+  $tok = (Invoke-RestMethod "https://ghcr.io/token?scope=repository:gabrielsuarezz/certuity-prism-api:pull&service=ghcr.io").token
+  $mh = @{
+    Authorization = "Bearer $tok"
+    Accept        = "application/vnd.oci.image.index.v1+json,application/vnd.docker.distribution.manifest.v2+json,application/vnd.docker.distribution.manifest.list.v2+json"
+  }
+  $resp = Invoke-WebRequest -Method Get -Uri "https://ghcr.io/v2/gabrielsuarezz/certuity-prism-api/manifests/latest" -Headers $mh -UseBasicParsing
+  $digest = $resp.Headers["Docker-Content-Digest"]
+  if ($digest -is [array]) { $digest = $digest[0] }
+  if ($digest) { $ImageRef = "ghcr.io/gabrielsuarezz/certuity-prism-api@$digest" }
+} catch {
+  Write-Host "(Couldn't resolve image digest; falling back to :latest.)" -ForegroundColor Yellow
+}
+
 $suffix = 'v' + (Get-Date -Format 'MMddHHmmss')
-Write-Host "Rolling onto the fresh image (revision $suffix)..." -ForegroundColor Cyan
-az containerapp update --name $App --resource-group $Rg --image $Image `
+Write-Host "Rolling onto image (revision $suffix):" -ForegroundColor Cyan
+Write-Host "  $ImageRef" -ForegroundColor DarkGray
+az containerapp update --name $App --resource-group $Rg --image $ImageRef `
   --set-env-vars $envArgs --revision-suffix $suffix
 if ($LASTEXITCODE -ne 0) { throw "container app update failed." }
 
