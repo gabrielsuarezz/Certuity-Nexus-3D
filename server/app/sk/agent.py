@@ -14,7 +14,9 @@ from app.config import settings
 from app.sk.context import TurnContext
 from app.sk.persona import SYSTEM_PROMPT
 from app.sk.plugins.actions import ActionsPlugin
+from app.sk.plugins.market import MarketPlugin
 from app.sk.plugins.portfolio import PortfolioPlugin
+from app.sk.plugins.research import SearchPlugin
 from app.sk.plugins.scenario import ScenarioPlugin
 from app.sk.plugins.visualize import VisualizePlugin
 
@@ -72,6 +74,8 @@ async def sk_agent_turn(message: str, history: list[dict], repo, ctx: TurnContex
     kernel.add_plugin(VisualizePlugin(repo, ctx), "map")
     kernel.add_plugin(ScenarioPlugin(repo, ctx), "scenario")
     kernel.add_plugin(ActionsPlugin(ctx), "actions")
+    kernel.add_plugin(MarketPlugin(ctx), "market")
+    kernel.add_plugin(SearchPlugin(ctx), "research")
 
     chat = ChatHistory()
     chat.add_system_message(SYSTEM_PROMPT)

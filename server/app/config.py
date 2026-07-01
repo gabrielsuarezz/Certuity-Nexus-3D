@@ -35,6 +35,11 @@ class Settings(BaseSettings):
     sf_consumer_secret: str = ""
     sf_instance_url: str = ""
 
+    # Live tools — market data (Alpha Vantage) + web search (Tavily). Optional;
+    # when unset the tools return a graceful "not available" message.
+    alpha_vantage_key: str = ""
+    tavily_api_key: str = ""
+
     @property
     def origins(self) -> list[str]:
         return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
@@ -50,6 +55,14 @@ class Settings(BaseSettings):
     @property
     def content_safety_ready(self) -> bool:
         return bool(self.azure_content_safety_endpoint and self.azure_content_safety_key)
+
+    @property
+    def market_ready(self) -> bool:
+        return bool(self.alpha_vantage_key)
+
+    @property
+    def search_ready(self) -> bool:
+        return bool(self.tavily_api_key)
 
 
 settings = Settings()
