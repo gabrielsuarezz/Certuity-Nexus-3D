@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import random
 import time
 import uuid
 
@@ -21,6 +22,14 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from app.config import settings
 from app.realtime import hub
 from app.sk.orchestrator import run_turn
+
+# Short spoken fillers streamed immediately on a voice turn, so the voice pipeline
+# gets REAL content right away while the brain (which may call tools) works.
+_FILLERS = (
+    "Let me take a look for you. ",
+    "One moment. ",
+    "Sure, let me check on that. ",
+)
 
 
 def _model_name() -> str:
@@ -106,17 +115,18 @@ async def chat_completions(body: dict):
 
     if stream:
         async def gen():
-            # Open the stream immediately, then send a tiny keep-alive every second
-            # while the brain works (it may call tools and take a few seconds).
-            # Without this, ElevenLabs' streaming timeout fires and the voice call
-            # drops — the mic "turns off" mid-turn.
-            yield f"data: {json.dumps(_chunk('', role=True))}\n\n"
+            # ElevenLabs waits for REAL content and fails if the first token is too
+            # slow. Our guardrailed brain may call tools and take several seconds, so
+            # speak a short, natural filler immediately (real content that satisfies
+            # the first-content timer), keep the socket alive with SSE comments, then
+            # send the full grounded answer.
+            yield f"data: {json.dumps(_chunk(random.choice(_FILLERS), role=True))}\n\n"
             task = asyncio.create_task(_run(user_text, history))
             while True:
                 done, _pending = await asyncio.wait({task}, timeout=1.0)
                 if done:
                     break
-                yield f"data: {json.dumps(_chunk(''))}\n\n"
+                yield ": keep-alive\n\n"  # SSE comment — ignored by the OpenAI parser, keeps TCP open
             reply = task.result()
             yield f"data: {json.dumps(_chunk(reply))}\n\n"
             yield f"data: {json.dumps(_chunk('', done=True))}\n\n"
