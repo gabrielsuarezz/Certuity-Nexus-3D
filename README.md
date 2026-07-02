@@ -5,7 +5,7 @@ wealth map** of an ultra-high-net-worth family office with a private **AI
 associate you can talk to** — grounded in the client's own data, wrapped in a
 visible safety layer, and driving the map in real time.
 
- Live demo:** https://certuity-nexus-3-d.vercel.app
+**Live demo:** https://certuity-nexus-3-d.vercel.app
 _(Talk or type. Try: "What is my total AUM?", "How are my alternatives doing?",
 "Trace my Alts+ fund", or drop in a PDF to analyze.)_
 
