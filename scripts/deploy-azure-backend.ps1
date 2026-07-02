@@ -13,8 +13,8 @@
        Then close & reopen PowerShell.
     2. az login
 
-  THEN:
-    ./deploy-azure-backend.ps1
+  THEN (run from the repo root):
+    ./scripts/deploy-azure-backend.ps1
 #>
 
 $ErrorActionPreference = 'Stop'

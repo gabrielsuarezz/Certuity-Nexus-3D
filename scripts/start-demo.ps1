@@ -4,10 +4,11 @@
 # and the web app. Close the windows to stop everything.
 #
 # Run it:  right-click this file -> "Run with PowerShell"
-#   (or)   powershell -ExecutionPolicy Bypass -File .\start-demo.ps1
+#   (or)   powershell -ExecutionPolicy Bypass -File .\scripts\start-demo.ps1
 # ─────────────────────────────────────────────────────────────────────────────
 
-$root = $PSScriptRoot
+# Repo root = the parent of this scripts/ folder.
+$root = Split-Path $PSScriptRoot -Parent
 Write-Host "Starting Certuity Prism demo..." -ForegroundColor Cyan
 
 # 1) Backend — FastAPI + Semantic Kernel brain (Azure-hosted GPT-4o-mini)
