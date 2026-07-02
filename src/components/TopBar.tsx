@@ -116,11 +116,12 @@ function AnalyzerSwitch({
       }}
     >
       <motion.span
-        className="absolute top-1/2 h-5 w-5 rounded-full"
-        animate={{ x: active ? 22 : 3 }}
+        className="pointer-events-none absolute left-0 h-5 w-5 rounded-full"
+        initial={false}
+        animate={{ x: active ? 23 : 3 }}
         transition={{ type: 'spring', stiffness: 520, damping: 32 }}
         style={{
-          translateY: '-50%',
+          top: 3,
           background: active
             ? 'radial-gradient(circle at 35% 30%, #ffffff, var(--emerald-bright))'
             : 'radial-gradient(circle at 35% 30%, #ffffff, #9aa8a2)',
