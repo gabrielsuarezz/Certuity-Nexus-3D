@@ -84,10 +84,10 @@ with `VITE_AGENT_BASE_URL=http://127.0.0.1:8000`.
 
 ---
 
-## Author & license
+## Author
 
-Created by **Gabriel Suarez**. © 2026 Gabriel Suarez — **all rights reserved.**
-This repository is published for viewing and evaluation only; it is **not**
-open source. See [`LICENSE`](./LICENSE) for terms. "Certuity" marks belong to
-their respective owners; this is an independent demonstration and is not
-affiliated with or endorsed by Certuity.
+Created by **Gabriel Suarez** — [gsuar092@fiu.edu](mailto:gsuar092@fiu.edu).
+
+_An independent demonstration project. "Certuity" and related marks belong to
+their respective owners; this project is not affiliated with or endorsed by
+Certuity._
