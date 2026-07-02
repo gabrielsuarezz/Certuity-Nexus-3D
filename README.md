@@ -1,103 +1,93 @@
-# The Interactive Wealth Graph
+# Certuity Prism
 
-A high-end, interactive visualization of an ultra-high-net-worth family office's
-wealth structure — built as a live visual demo for a premium fintech / family-
-office product. Dark-mode, physics-driven, and deployable to Vercel as a static
-SPA.
+**A voice-driven AI wealth associate.** Certuity Prism pairs an interactive **3D
+wealth map** of an ultra-high-net-worth family office with a private **AI
+associate you can talk to** — grounded in the client's own data, wrapped in a
+visible safety layer, and driving the map in real time.
 
-> **Family Office → Legal Entities → Financial Accounts**, modeled on the
-> Salentica/Salesforce schema, with a real service seam ready for live data.
+**▶ Live demo:** https://certuity-nexus-3-d.vercel.app
+_(Talk or type. Try: "What is my total AUM?", "How are my alternatives doing?",
+"Trace my Alts+ fund", or drop in a PDF to analyze.)_
 
-## Core features
+> Built as an end-to-end product demonstration in a specific stack — **Python ·
+> Microsoft Semantic Kernel · Azure-hosted GPT-4o · React** — with the safety
+> and compliance layer deliberately foregrounded.
 
-1. **Physics canvas** — an interactive web of nodes powered by a live
-   [`d3-force`](https://github.com/d3/d3-force) simulation. The household is
-   pinned at the center; entities and accounts settle onto orbital rings. Drag
-   any node and the forces ease it back into place — a fluid, physics-based
-   snap-back.
-2. **Details panel** — click any node and a glassy panel slides in from the
-   right with the entity's AUM, beneficiaries, custodian, lineage, and the
-   source SObject API name.
-3. **Look-Through Analyzer** — flip the toggle, click an account (e.g. the
-   **Alts+ Fund**), and the canvas dims while a bright neon line traces the
-   exact lineage **account → trust → family office**.
+---
+
+## What it does
+
+- **3D wealth map** — the family office, its legal entities, and their financial
+  accounts as a living map (React + react-three-fiber), sized and lit by value.
+- **Talk to your portfolio** — a private associate (text + live voice) answers
+  questions grounded in the client's real holdings and **drives the map as it
+  speaks** (focus a node, trace lineage) exactly like a click would.
+- **Look-Through Analyzer** — trace any account's ownership lineage back up to
+  the family office.
+- **Live "at a glance" panel** — total AUM, day change, and an allocation donut
+  by asset class, updating with a simulated market feed.
+- **Document analysis with guardrails** — upload a statement or capital-call
+  notice; its text is screened for hidden/injected instructions **before** it is
+  ever summarized, and nothing in it is executed.
+- **Human-in-the-loop** — sensitive actions never run automatically; they raise
+  an approval the client must confirm.
+- **A visible safety layer** — prompt-injection detection, scope/authorization
+  checks, PII redaction, and an audit trail — surfaced live in the UI so the
+  trust story is demonstrable, not hidden.
+
+## Architecture
+
+**Frontend** (repo root) — React + TypeScript + Vite, react-three-fiber for the
+3D map, Zustand for state, Tailwind for styling, ElevenLabs SDK for voice. The
+agent drives the map through the same store a user click uses, so spoken and
+typed answers manipulate the view identically.
+
+**Backend** (`server/`) — FastAPI + **Microsoft Semantic Kernel**. One brain
+wrapped in guardrails: injection check → scope check → tool-calling agent → PII
+redaction → audit. Tools cover portfolio Q&A, map control, what-if scenarios,
+human-in-the-loop actions, live market data, and web search (untrusted web
+results run the same injection shields as uploaded documents).
+
+**Pluggable seams** — the LLM provider (GitHub Models / Azure OpenAI) and the
+data source (bundled JSON / live Salesforce over SOQL) are swappable behind
+interfaces. The core text demo runs **fully keyless** in mock mode.
+
+**Deployment** — frontend on **Vercel**; backend containerized to **Azure
+Container Apps** (image built in GitHub Actions → GHCR). See `DEPLOY-AZURE.md`.
 
 ## Tech stack
 
-| Concern | Choice |
-| --- | --- |
-| Build | Vite + React 18 + TypeScript |
-| Graph / interaction | [`@xyflow/react`](https://reactflow.dev) (React Flow v12) |
-| Physics | `d3-force` (charge · link · collide · radial) |
-| Animation | Framer Motion |
-| State | Zustand |
-| Styling | Tailwind CSS + CSS variables (swappable palette) |
+React · TypeScript · Vite · react-three-fiber / three.js · Zustand · Tailwind ·
+Framer Motion · ElevenLabs · Python · FastAPI · Microsoft Semantic Kernel ·
+Azure OpenAI / GPT-4o · Salesforce (SOQL)
 
-## Backend-ready by design
+## Run it locally
 
-The app **never imports the mock JSON directly**. All data flows through one seam:
-
-```
-UI → useWealthData() → wealthService.fetchWealthGraph() → normalize → buildGraph()
-```
-
-- [`src/data/familyOffice.json`](src/data/familyOffice.json) is shaped like a
-  real **Salesforce REST query response** (`totalSize` / `done` / `records[]`
-  with `attributes`), keyed by the SObject API names.
-- [`src/services/wealthService.ts`](src/services/wealthService.ts) is the swap
-  point. Today it returns the mock (with simulated latency so the loading state
-  is real); tomorrow it `fetch()`es a live endpoint. The
-  `normalizeSalesforceResponse()` parsing is identical either way.
-- **Going live changes only the inside of that one function** — no UI/component
-  changes. The planned path: browser → a Vercel serverless `/api/wealth-graph`
-  → Salesforce SOQL with server-side OAuth.
-
-Flip it with env vars (see [`.env.example`](.env.example)):
-
-```bash
-VITE_USE_MOCK=false
-VITE_API_BASE_URL=https://your-app.vercel.app/api
-```
-
-## Data model (Salentica / Salesforce)
-
-| SObject API name | Role | Key lookup |
-| --- | --- | --- |
-| `SalenticaLMNTS__Relationship__c` | Family-office household (root) | — |
-| `SalenticaLMNTS__Portfolio__c` | Legal entities (trusts, LLCs) | `SalenticaLMNTS__Relationship__c` |
-| `SalenticaLMNTS__FinancialAccount__c` | Accounts & alternatives | `SalenticaLMNTS__Portfolio__c` |
-
-## Getting started
+**Frontend** (repo root):
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm run build      # type-check + production bundle → dist/
-npm run preview    # preview the production build
+npm run build      # type-check + production build
 ```
 
-## Deploy to Vercel
-
-Push to a Git repo and import it in Vercel, or:
+**Backend** (`server/`, keyless mock mode needs no API keys):
 
 ```bash
-npm i -g vercel
-vercel
+python -m venv .venv
+.venv/Scripts/python -m pip install -r requirements.txt
+.venv/Scripts/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Vercel auto-detects Vite (config in [`vercel.json`](vercel.json)). No backend or
-environment variables are required for the demo.
+By default the frontend talks to the deployed backend; point it at a local one
+with `VITE_AGENT_BASE_URL=http://127.0.0.1:8000`.
 
-## Project structure
+---
 
-```
-src/
-  config/env.ts             # data-source config (the "go live" switch)
-  data/familyOffice.json    # mock data in Salesforce REST envelopes
-  types/salesforce.ts       # SObject + envelope + view-model types
-  services/wealthService.ts # THE SEAM: fetch + normalize
-  lib/buildGraph.ts         # records → nodes/edges; getLineage()
-  store/useGraphStore.ts    # selection + look-through state (Zustand)
-  hooks/                    # useWealthData, useForceLayout, useNodeStates
-  components/               # TopBar, GraphCanvas, DetailsPanel, nodes/, edges/, states/
-```
+## Author & license
+
+Created by **Gabriel Suarez**. © 2026 Gabriel Suarez — **all rights reserved.**
+This repository is published for viewing and evaluation only; it is **not**
+open source. See [`LICENSE`](./LICENSE) for terms. "Certuity" marks belong to
+their respective owners; this is an independent demonstration and is not
+affiliated with or endorsed by Certuity.
