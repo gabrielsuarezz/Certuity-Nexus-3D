@@ -57,10 +57,10 @@ export function LineageTrace({ positions }: { positions: Positions }) {
 
   return (
     <group>
-      <Line ref={lineRef} points={linePoints} color="#fff4cf" lineWidth={3} transparent opacity={0} />
+      <Line ref={lineRef} points={linePoints} color="#8A6A24" lineWidth={4} transparent opacity={0} />
       <mesh ref={cometRef}>
-        <sphereGeometry args={[1.2, 14, 14]} />
-        <meshBasicMaterial color="#fff7d6" toneMapped={false} />
+        <sphereGeometry args={[1.3, 14, 14]} />
+        <meshStandardMaterial color="#C6A15A" emissive="#C6A15A" emissiveIntensity={0.9} toneMapped={false} />
       </mesh>
     </group>
   )

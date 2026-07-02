@@ -42,9 +42,9 @@ interface Briefing {
 }
 
 const ITEM_COLOR: Record<string, string> = {
-  concentration: '#d9a441',
-  liquidity: '#5fa8e6',
-  performance: '#46d39a',
+  concentration: '#9c7a34',
+  liquidity: '#2e5788',
+  performance: '#2f8f68',
 }
 
 /** The on-screen "private associate": text + voice, drives the 3D map, and
@@ -127,15 +127,15 @@ export function AgentDock() {
         >
           <div className="flex items-center gap-2.5">
             <span
-              className="flex h-7 w-7 items-center justify-center rounded-lg"
-              style={{ background: 'linear-gradient(160deg, #16304c, #0b1e36)' }}
+              className="flex h-7 w-7 items-center justify-center rounded-lg shadow-[0_4px_12px_-6px_rgba(29,58,94,0.7)]"
+              style={{ background: 'linear-gradient(160deg, #2E5788, #1D3A5E)' }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden>
-                <path d="M12 5V19M5 12H19" stroke="#C99B6A" strokeWidth="3.4" strokeLinecap="round" />
+                <path d="M12 5V19M5 12H19" stroke="#E2C88C" strokeWidth="3.4" strokeLinecap="round" />
               </svg>
             </span>
             <div>
-              <p className="text-[12.5px] font-semibold text-ink">Your Certuity Associate</p>
+              <p className="text-[13px] font-semibold text-ink">Your Certuity Associate</p>
               <p className="text-[10px] text-ink-faint">{STATUS_LABEL[status]}</p>
             </div>
           </div>
@@ -149,17 +149,17 @@ export function AgentDock() {
             <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
               <div
                 ref={scrollRef}
-                className="scroll-slim max-h-[40vh] space-y-2 overflow-y-auto border-t border-white/[0.06] px-4 py-3"
+                className="scroll-slim max-h-[40vh] space-y-2 overflow-y-auto border-t border-ink/10 px-4 py-3"
               >
                 {messages.length === 0 && (
                   <div className="text-[12px] text-ink-muted">
                     {briefing ? (
-                      <div className="mb-2.5 rounded-xl border border-white/[0.07] bg-white/[0.03] p-3">
+                      <div className="mb-2.5 rounded-xl border border-ink/10 bg-white/60 p-3 shadow-sm">
                         <div className="flex items-baseline justify-between gap-2">
                           <p className="text-[12.5px] font-semibold text-ink">{briefing.greeting}</p>
                           <span
                             className="text-[11px] font-medium tabular-nums"
-                            style={{ color: briefing.change_pct >= 0 ? '#46d39a' : '#e5917c' }}
+                            style={{ color: briefing.change_pct >= 0 ? '#2f8f68' : '#c2603f' }}
                           >
                             {briefing.change_pct >= 0 ? '▲' : '▼'} {Math.abs(briefing.change_pct)}% today
                           </span>
@@ -186,26 +186,26 @@ export function AgentDock() {
                           key={s}
                           type="button"
                           onClick={() => send(s)}
-                          className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-ink transition hover:bg-white/[0.08]"
+                          className="rounded-full border border-ink/12 bg-white/70 px-2.5 py-1 text-[11.5px] text-ink shadow-sm transition hover:border-emr/40 hover:bg-white"
                         >
                           {s}
                         </button>
                       ))}
                     </div>
-                    <div className="mt-2.5 border-t border-white/[0.05] pt-2">
+                    <div className="mt-2.5 border-t border-ink/10 pt-2">
                       <p className="mb-1.5 text-[10.5px] text-ink-faint">Or analyze a document:</p>
                       <div className="flex flex-wrap gap-1.5">
                         <button
                           type="button"
                           onClick={() => loadSample('/samples/capital-call.pdf', 'capital-call.pdf')}
-                          className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-ink transition hover:bg-white/[0.08]"
+                          className="rounded-full border border-ink/12 bg-white/70 px-2.5 py-1 text-[11.5px] text-ink shadow-sm transition hover:border-emr/40 hover:bg-white"
                         >
                           📄 Capital call notice
                         </button>
                         <button
                           type="button"
                           onClick={() => loadSample('/samples/suspicious-notice.pdf', 'suspicious-notice.pdf')}
-                          className="rounded-full border border-[#E5917C]/30 bg-[#E5917C]/[0.06] px-2.5 py-1 text-[11px] text-ink transition hover:bg-[#E5917C]/[0.12]"
+                          className="rounded-full border border-[#C2603F]/40 bg-[#C2603F]/[0.08] px-2.5 py-1 text-[11.5px] text-ink shadow-sm transition hover:bg-[#C2603F]/[0.16]"
                         >
                           ⚠ Suspicious document
                         </button>
@@ -216,9 +216,11 @@ export function AgentDock() {
                 {messages.map((m) => (
                   <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div
-                      className={`max-w-[82%] rounded-2xl px-3 py-2 text-[12.5px] leading-relaxed ${
-                        m.role === 'user' ? 'bg-emr/15 text-ink' : 'bg-white/[0.04] text-ink'
-                      } ${m.blocked ? 'border border-[#E5917C]/40' : ''}`}
+                      className={`max-w-[82%] rounded-2xl px-3.5 py-2 text-[13px] leading-relaxed shadow-sm ${
+                        m.role === 'user'
+                          ? 'bg-emr/12 text-ink'
+                          : 'border border-ink/8 bg-white/85 text-ink'
+                      } ${m.blocked ? 'border-2 border-[#C2603F]/50' : ''}`}
                     >
                       {m.text}
                     </div>
@@ -231,7 +233,7 @@ export function AgentDock() {
                 {docResult && <DocumentCard doc={docResult} />}
               </div>
 
-              <form onSubmit={submit} className="flex items-center gap-2 border-t border-white/[0.06] p-2.5">
+              <form onSubmit={submit} className="flex items-center gap-2 border-t border-ink/10 p-2.5">
                 {voiceEnabled && (
                   <Suspense fallback={null}>
                     <VoiceSession agentId={agentId} />
@@ -242,7 +244,7 @@ export function AgentDock() {
                   type="button"
                   onClick={() => fileRef.current?.click()}
                   title="Upload a document"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-ink transition hover:bg-white/10"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/10 bg-white/70 text-ink-muted transition hover:bg-white hover:text-ink"
                 >
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden>
                     <path d="M21 12.5l-8.6 8.6a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l7.6-7.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -252,11 +254,11 @@ export function AgentDock() {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Ask your associate…"
-                  className="flex-1 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[13px] text-ink outline-none placeholder:text-ink-faint focus:border-white/20"
+                  className="flex-1 rounded-full border border-ink/15 bg-white/80 px-4 py-2 text-[13.5px] text-ink outline-none placeholder:text-ink-faint focus:border-emr/50 focus:bg-white"
                 />
                 <button
                   type="submit"
-                  className="rounded-full bg-gld/20 px-4 py-2 text-[12px] font-medium text-gld-bright transition hover:bg-gld/30"
+                  className="rounded-full bg-gld px-4 py-2 text-[12.5px] font-semibold text-white shadow-[0_6px_16px_-8px_rgba(122,94,42,0.9)] transition hover:bg-gld-deep"
                 >
                   Send
                 </button>

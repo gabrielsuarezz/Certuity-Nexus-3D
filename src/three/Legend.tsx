@@ -95,15 +95,15 @@ const ITEMS: {
   color: string
   Glyph: (p: { c: string }) => JSX.Element
 }[] = [
-  { type: 'office', label: 'Family Office', color: '#C9A86A', Glyph: Office },
-  { type: 'trust', label: 'Trust', color: '#D2A45E', Glyph: Shield },
-  { type: 'llc', label: 'LLC', color: '#6FA8D6', Glyph: Tower },
-  { type: 'holding', label: 'Holding Co.', color: '#74C0CC', Glyph: Stacked },
-  { type: 'brokerage', label: 'Brokerage', color: '#5BD6B0', Glyph: Bars },
-  { type: 'alternative', label: 'Alternatives', color: '#CFE6FF', Glyph: Gem },
-  { type: 'managed', label: 'Managed', color: '#E2C88C', Glyph: Coins },
-  { type: 'custody', label: 'Custody', color: '#8FB0CC', Glyph: Vault },
-  { type: 'real_estate', label: 'Real Estate', color: '#C98A5E', Glyph: House },
+  { type: 'office', label: 'Family Office', color: '#B98F3F', Glyph: Office },
+  { type: 'trust', label: 'Trust', color: '#A97E44', Glyph: Shield },
+  { type: 'llc', label: 'LLC', color: '#3E5F86', Glyph: Tower },
+  { type: 'holding', label: 'Holding Co.', color: '#5D7590', Glyph: Stacked },
+  { type: 'brokerage', label: 'Brokerage', color: '#3E7E68', Glyph: Bars },
+  { type: 'alternative', label: 'Alternatives', color: '#B79552', Glyph: Gem },
+  { type: 'managed', label: 'Managed', color: '#C29A45', Glyph: Coins },
+  { type: 'custody', label: 'Custody', color: '#7E7F76', Glyph: Vault },
+  { type: 'real_estate', label: 'Real Estate', color: '#BE8354', Glyph: House },
 ]
 
 /**
@@ -129,7 +129,7 @@ export function Legend() {
   }, [data])
 
   return (
-    <div className="glass absolute bottom-4 left-4 z-10 rounded-xl px-3 py-3">
+    <div className="glass hairline absolute bottom-4 right-4 z-10 rounded-xl px-3 py-3">
       <p className="mb-2 px-1 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-faint">
         Key — click to inspect
       </p>
@@ -145,8 +145,8 @@ export function Legend() {
               onClick={() => entry && selectNode(entry.id)}
               className={clsx(
                 'flex items-center gap-2 rounded-md px-1.5 py-1 text-left transition',
-                entry ? 'cursor-pointer hover:bg-white/[0.07]' : 'opacity-50',
-                isSelected && 'bg-white/[0.10]',
+                entry ? 'cursor-pointer hover:bg-ink/[0.06]' : 'opacity-50',
+                isSelected && 'bg-ink/[0.09]',
               )}
             >
               <Glyph c={color} />
@@ -155,8 +155,8 @@ export function Legend() {
           )
         })}
       </div>
-      <p className="mt-2.5 flex items-center gap-1.5 border-t border-white/[0.07] px-1 pt-2 text-[10px] text-ink-faint">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#5BD6B0]" />
+      <p className="mt-2.5 flex items-center gap-1.5 border-t border-ink/10 px-1 pt-2 text-[10px] text-ink-faint">
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#2f8f68]" />
         Live feed · bigger = greater value
       </p>
     </div>

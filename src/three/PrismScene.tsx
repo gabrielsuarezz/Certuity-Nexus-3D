@@ -20,14 +20,14 @@ export function PrismScene({ data }: { data: WealthData }) {
       <Canvas
         frameloop="always"
         dpr={[1, 1.5]}
-        camera={{ position: [0, 58, 116], fov: 48, near: 0.1, far: 2000 }}
+        camera={{ position: [0, 74, 150], fov: 48, near: 0.1, far: 2000 }}
         gl={{ antialias: false, powerPreference: 'high-performance', stencil: false, alpha: true }}
         onCreated={({ gl }) => gl.setClearAlpha(0)}
       >
-        {/* Transparent canvas — no <color> background — so the layered CSS backdrop
-            (azure/gold glow, masked grid, vignette) in <Background/> shows through and
-            gives the scene depth. Fog still fades distant nodes into the same navy. */}
-        <fog attach="fog" args={['#0B1E36', 150, 420]} />
+        {/* Transparent canvas — no <color> background — so the warm paper backdrop
+            in <Background/> shows through and gives the scene depth. Fog fades
+            distant nodes into the same parchment tone so they melt into the page. */}
+        <fog attach="fog" args={['#E7DBC4', 190, 460]} />
         <Scene key={data.household.Id} data={data} />
       </Canvas>
 
@@ -37,8 +37,8 @@ export function PrismScene({ data }: { data: WealthData }) {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="glass pointer-events-none absolute left-1/2 top-4 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emr/30 px-4 py-1.5 text-xs text-ink-muted"
-            style={{ boxShadow: '0 0 24px -8px rgba(16,185,129,0.5)' }}
+            className="glass pointer-events-none absolute left-1/2 top-4 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emr/30 px-4 py-1.5 text-[13px] text-ink-muted"
+            style={{ boxShadow: '0 14px 30px -18px rgba(46,87,136,0.5)' }}
           >
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emr-bright" />
             Select an account node to trace its lineage to the family office

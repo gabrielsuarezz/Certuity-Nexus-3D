@@ -3,34 +3,45 @@
 @tailwind utilities;
 
 /* ────────────────────────────────────────────────────────────────────────────
-   Design tokens — Emerald & Gold on charcoal (swappable palette)
+   Design tokens — Warm private-bank (light): ivory paper, deep-navy ink,
+   champagne gold + navy accents. Token NAMES are kept from the earlier dark
+   theme (--emerald / --gold / --ink …) so no component has to change; only the
+   values flip. "emerald" now holds a deep private-banking navy-blue.
    ──────────────────────────────────────────────────────────────────────────── */
 :root {
-  --bg-base: #0b1e36;
-  --bg-surface: #0e2238;
-  --bg-surface-2: #16304c;
+  /* Warm parchment field + raised warm-white surfaces */
+  --bg-base: #e9dfcc;
+  --bg-surface: #f4eee1;
+  --bg-surface-2: #fbf7ee;
+  --paper: #fbf8f1;
+  --paper-2: #ffffff;
 
-  /* 'emerald' vars now hold Certuity azure (token name kept). */
-  --emerald: #5b9bd5;
-  --emerald-bright: #7fb8e8;
-  --emerald-deep: #3a6e9e;
+  /* 'emerald' vars now hold a deep private-bank navy-blue (token name kept). */
+  --emerald: #2e5788;
+  --emerald-bright: #3d6da6;
+  --emerald-deep: #1d3a5e;
 
-  --gold: #c9a86a;
-  --gold-bright: #e2c88c;
-  --gold-deep: #9c8350;
+  /* Champagne gold — deepened so it reads on a light field. */
+  --gold: #9c7a34;
+  --gold-bright: #b8923f;
+  --gold-deep: #7a5e2a;
 
-  --ink: #eef3f9;
-  --ink-muted: #9fb0c4;
-  --ink-faint: #5d7290;
+  /* Ink — deep slate-navy on paper (older-eye legibility over pure black). */
+  --ink: #22303f;
+  --ink-muted: #566472;
+  --ink-faint: #8a94a0;
 
-  /* Look-Through trace (warm white-gold) */
-  --trace-core: #fff4cf;
-  --trace-glow: #ffd66b;
-  --trace-halo: #7fb8e8;
+  /* Look-Through trace (warm gilt) */
+  --trace-core: #7a5e2a;
+  --trace-glow: #b8923f;
+  --trace-halo: #2e5788;
 
-  --edge: rgba(120, 150, 190, 0.32);
-  --glass-fill: rgba(255, 255, 255, 0.035);
-  --glass-border: rgba(255, 255, 255, 0.09);
+  --edge: rgba(60, 78, 104, 0.28);
+  /* Frosted warm-white glass on paper */
+  --glass-fill: rgba(255, 253, 248, 0.72);
+  --glass-border: rgba(34, 48, 63, 0.1);
+  --glass-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.7) inset,
+    0 24px 60px -28px rgba(72, 58, 30, 0.4);
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -72,11 +83,12 @@
   .glass {
     background: var(--glass-fill);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(16px) saturate(120%);
-    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(18px) saturate(115%);
+    -webkit-backdrop-filter: blur(18px) saturate(115%);
   }
 
-  /* Premium hairline gradient border used on panels */
+  /* Premium hairline gradient border used on panels — warm gilt on light. */
   .hairline {
     position: relative;
   }
@@ -88,9 +100,9 @@
     padding: 1px;
     background: linear-gradient(
       160deg,
-      rgba(255, 255, 255, 0.16),
-      rgba(255, 255, 255, 0.02) 40%,
-      rgba(212, 175, 55, 0.12)
+      rgba(255, 255, 255, 0.9),
+      rgba(184, 146, 63, 0.18) 45%,
+      rgba(34, 48, 63, 0.08)
     );
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
@@ -102,7 +114,7 @@
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   Graph node states (toggled by NodeShell)
+   Graph node states (legacy 2D React Flow classes — retained, harmless)
    ──────────────────────────────────────────────────────────────────────────── */
 .wg-node {
   transition:
@@ -113,114 +125,12 @@
   will-change: transform, filter, opacity;
 }
 
-.wg-node--household {
-  box-shadow:
-    0 0 0 1px rgba(212, 175, 55, 0.25),
-    0 0 40px -6px rgba(212, 175, 55, 0.45),
-    0 24px 60px -20px rgba(0, 0, 0, 0.8);
-}
-.wg-node--portfolio {
-  box-shadow:
-    0 0 0 1px rgba(16, 185, 129, 0.22),
-    0 0 26px -8px rgba(16, 185, 129, 0.4),
-    0 18px 44px -20px rgba(0, 0, 0, 0.75);
-}
-.wg-node--account {
-  box-shadow:
-    0 0 0 1px rgba(125, 145, 137, 0.18),
-    0 14px 36px -22px rgba(0, 0, 0, 0.75);
-}
-.wg-node--account.is-alt {
-  box-shadow:
-    0 0 0 1px rgba(212, 175, 55, 0.3),
-    0 0 22px -8px rgba(212, 175, 55, 0.35),
-    0 14px 36px -22px rgba(0, 0, 0, 0.75);
-}
-
 .wg-node.is-selected {
   transform: translateZ(0) scale(1.04);
 }
-.wg-node--household.is-selected {
-  box-shadow:
-    0 0 0 1px rgba(245, 213, 138, 0.6),
-    0 0 60px -4px rgba(212, 175, 55, 0.6),
-    0 24px 60px -20px rgba(0, 0, 0, 0.85);
-}
-.wg-node--portfolio.is-selected {
-  box-shadow:
-    0 0 0 1px rgba(52, 211, 153, 0.6),
-    0 0 44px -6px rgba(16, 185, 129, 0.6),
-    0 18px 44px -20px rgba(0, 0, 0, 0.8);
-}
-.wg-node--account.is-selected {
-  box-shadow:
-    0 0 0 1px rgba(231, 237, 235, 0.45),
-    0 0 30px -8px rgba(180, 200, 190, 0.5),
-    0 14px 36px -22px rgba(0, 0, 0, 0.8);
-}
-
-/* Look-Through: dim everything off the lineage */
-.wg-node.is-dimmed {
-  opacity: 0.16;
-  filter: grayscale(0.7) brightness(0.7) blur(0.4px);
-}
-
-/* Look-Through: the traced lineage nodes blaze */
-.wg-node.is-traced {
-  box-shadow:
-    0 0 0 1px rgba(255, 214, 107, 0.7),
-    0 0 50px -4px rgba(255, 214, 107, 0.65),
-    0 0 90px -10px rgba(52, 211, 153, 0.4);
-  animation: wg-breathe 2.4s ease-in-out infinite;
-}
 
 /* ────────────────────────────────────────────────────────────────────────────
-   React Flow surface
-   ──────────────────────────────────────────────────────────────────────────── */
-.react-flow {
-  background: transparent;
-}
-.react-flow__renderer,
-.react-flow__pane {
-  cursor: grab;
-}
-.react-flow__pane.dragging {
-  cursor: grabbing;
-}
-/* Hide connection handles — edges attach, but we never want visible dots */
-.react-flow__handle {
-  opacity: 0;
-  pointer-events: none;
-  min-width: 1px;
-  min-height: 1px;
-  width: 1px;
-  height: 1px;
-  border: 0;
-  background: transparent;
-}
-.react-flow__edge {
-  pointer-events: none;
-}
-.react-flow__controls {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.7);
-}
-.react-flow__controls-button {
-  background: var(--bg-surface-2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: var(--ink-muted);
-}
-.react-flow__controls-button:hover {
-  background: #1b2622;
-  color: var(--ink);
-}
-.react-flow__controls-button svg {
-  fill: currentColor;
-}
-
-/* ────────────────────────────────────────────────────────────────────────────
-   Scrollbars (details panel)
+   Scrollbars (details panel / dock)
    ──────────────────────────────────────────────────────────────────────────── */
 .scroll-slim::-webkit-scrollbar {
   width: 8px;
@@ -229,11 +139,11 @@
   background: transparent;
 }
 .scroll-slim::-webkit-scrollbar-thumb {
-  background: rgba(125, 145, 137, 0.25);
+  background: rgba(34, 48, 63, 0.18);
   border-radius: 999px;
 }
 .scroll-slim::-webkit-scrollbar-thumb:hover {
-  background: rgba(125, 145, 137, 0.4);
+  background: rgba(34, 48, 63, 0.32);
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -241,10 +151,10 @@
    ──────────────────────────────────────────────────────────────────────────── */
 @layer utilities {
   .text-glow-gold {
-    text-shadow: 0 0 22px rgba(201, 168, 106, 0.5);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
   }
   .text-glow-emerald {
-    text-shadow: 0 0 22px rgba(91, 155, 213, 0.45);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
   }
   .shimmer {
     position: relative;
@@ -258,7 +168,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.07),
+      rgba(255, 255, 255, 0.5),
       transparent
     );
     animation: wg-shimmer 1.6s infinite;
@@ -268,12 +178,6 @@
 /* ────────────────────────────────────────────────────────────────────────────
    Keyframes
    ──────────────────────────────────────────────────────────────────────────── */
-@keyframes wg-flow {
-  to {
-    stroke-dashoffset: -28;
-  }
-}
-
 @keyframes wg-trace-draw {
   to {
     stroke-dashoffset: 0;
@@ -286,7 +190,7 @@
     filter: brightness(1);
   }
   50% {
-    filter: brightness(1.18);
+    filter: brightness(1.12);
   }
 }
 
@@ -302,16 +206,6 @@
   }
 }
 
-@keyframes wg-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
-}
-
 @keyframes wg-pulse-ring {
   0% {
     transform: scale(0.85);
@@ -323,48 +217,77 @@
   }
 }
 
-/* Low-key aurora veils (Background.tsx) — slow, desynced drift; transform/opacity
-   only so they composite cheaply over the navy field. */
-.wg-veil,
-.wg-veil-2 {
+/* Aurora ribbons (Background.tsx) — flowing jewel-tone light curtains that drift,
+   tilt and breathe. Desynced, long durations; transform/opacity only so they
+   composite cheaply. `multiply` blend lets the colour read richly over paper. */
+.wg-aur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(64px);
+  mix-blend-mode: multiply;
   will-change: transform, opacity;
 }
-.wg-veil {
-  animation: wg-veil 40s ease-in-out infinite;
+.wg-aur-a {
+  animation: wg-aur-a 26s ease-in-out infinite;
 }
-.wg-veil-2 {
-  animation: wg-veil-2 52s ease-in-out infinite;
+.wg-aur-b {
+  animation: wg-aur-b 32s ease-in-out infinite;
 }
-
-@keyframes wg-veil {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.85;
-  }
-  50% {
-    transform: translate3d(7%, -3%, 0) scale(1.12);
-    opacity: 1;
-  }
+.wg-aur-c {
+  animation: wg-aur-c 38s ease-in-out infinite;
+}
+.wg-aur-d {
+  animation: wg-aur-d 44s ease-in-out infinite;
 }
 
-@keyframes wg-veil-2 {
+@keyframes wg-aur-a {
   0%,
   100% {
-    transform: translate3d(0, 0, 0) scale(1.08);
-    opacity: 0.75;
+    transform: translate3d(0, 0, 0) rotate(-12deg) scale(1);
+    opacity: 0.55;
   }
   50% {
-    transform: translate3d(-6%, 2%, 0) scale(1);
-    opacity: 1;
+    transform: translate3d(9%, 4%, 0) rotate(-4deg) scale(1.18);
+    opacity: 0.8;
+  }
+}
+@keyframes wg-aur-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(8deg) scale(1.1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate3d(-8%, 3%, 0) rotate(16deg) scale(0.95);
+    opacity: 0.78;
+  }
+}
+@keyframes wg-aur-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-6deg) scale(1.05);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate3d(7%, -4%, 0) rotate(4deg) scale(1.2);
+    opacity: 0.72;
+  }
+}
+@keyframes wg-aur-d {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(14deg) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate3d(-6%, -3%, 0) rotate(6deg) scale(1.14);
+    opacity: 0.66;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .wg-node,
-  .wg-veil,
-  .wg-veil-2,
-  .react-flow__edge * {
+  .wg-aur {
     animation: none !important;
     transition: none !important;
   }

@@ -1,10 +1,9 @@
 import { useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { PerformanceMonitor, Environment, Lightformer } from '@react-three/drei'
+import { PerformanceMonitor, Environment, Lightformer, ContactShadows, Sparkles } from '@react-three/drei'
 import * as THREE from 'three'
 import { buildGraph3D } from '@/lib/buildGraph3D'
 import { buildPositions } from './layout'
-import { LightPool } from './LightPool'
 import { NodeMesh } from './NodeMesh'
 import { Links } from './Links'
 import { LineageTrace } from './LineageTrace'
@@ -27,8 +26,12 @@ function AdaptivePerf() {
   )
 }
 
-/** Everything inside the <Canvas>. The constellation turns slowly (ambient,
- *  monitor-friendly) and eases to a neutral facing while a lineage is analyzed. */
+/**
+ * Everything inside the <Canvas>: sleek rounded node forms joined by gold
+ * ownership conduits, seated on soft contact shadows, in a warm studio with
+ * floating light-motes over the CSS aurora. Turns slowly (ambient), easing to a
+ * neutral facing while a lineage is analysed.
+ */
 export function Scene({ data }: { data: WealthData }) {
   const { nodes, links } = useMemo(() => buildGraph3D(data), [data])
   const positions = useMemo(() => buildPositions(nodes), [nodes])
@@ -39,38 +42,51 @@ export function Scene({ data }: { data: WealthData }) {
     const g = spin.current
     if (!g) return
     if (activeLeafId) g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, 0, 0.08)
-    else g.rotation.y += delta * 0.045
+    else g.rotation.y += delta * 0.028
   })
 
   return (
     <>
       <AdaptivePerf />
 
-      {/* Image-based reflections: gives the metal/clearcoat materials something to
-          reflect, so they read as minted metal & pearl instead of flat blobs.
-          background={false} → affects reflections only, not the visible (now
-          transparent) backdrop. Baked once; panels stay in the navy/gold palette. */}
+      {/* Warm, bright gallery studio for reflections so the satin finishes read
+          as real materials in daylight. background={false} → reflections only. */}
       <Environment resolution={256} frames={1} background={false}>
-        <color attach="background" args={['#0a1626']} />
-        {/* soft daylight top */}
-        <Lightformer form="rect" intensity={1.1} color="#eaf2ff" position={[0, 16, 4]} scale={[24, 24, 1]} />
-        {/* cool azure key, front-left */}
-        <Lightformer form="rect" intensity={1.5} color="#9fc2ec" position={[-18, 7, 16]} scale={[16, 12, 1]} />
-        {/* warm champagne rim, back-right */}
-        <Lightformer form="rect" intensity={1.3} color="#E8C48F" position={[18, 6, -14]} scale={[14, 12, 1]} />
-        {/* faint gold underglow off the floor */}
-        <Lightformer form="ring" intensity={0.6} color="#C9A86A" position={[0, -9, 8]} scale={11} />
+        <color attach="background" args={['#f3ead8']} />
+        <Lightformer form="rect" intensity={1.4} color="#fff6e6" position={[0, 16, 4]} scale={[26, 26, 1]} />
+        <Lightformer form="rect" intensity={1.6} color="#fffaf0" position={[-18, 8, 16]} scale={[16, 12, 1]} />
+        <Lightformer form="rect" intensity={1.2} color="#f0d6a4" position={[18, 6, -14]} scale={[14, 12, 1]} />
+        <Lightformer form="ring" intensity={0.5} color="#e9dcc0" position={[0, -9, 8]} scale={12} />
       </Environment>
 
-      <ambientLight intensity={0.32} color="#9fb4d4" />
-      <hemisphereLight args={['#3a5680', '#05080f', 0.42]} />
-      {/* cool key */}
-      <directionalLight position={[40, 90, 60]} intensity={1.3} color="#dce8fa" />
-      {/* warm champagne rim — breaks the all-blue cast and rakes the metal edges */}
-      <directionalLight position={[-70, 26, -48]} intensity={1.05} color="#E8C48F" />
-      <pointLight position={[-55, 45, -25]} intensity={0.5} color="#C9A86A" />
+      <ambientLight intensity={0.7} color="#fff3df" />
+      <hemisphereLight args={['#fff4e0', '#c9b593', 0.55]} />
+      <directionalLight position={[36, 88, 58]} intensity={1.1} color="#fff6e8" />
+      <directionalLight position={[-70, 30, -48]} intensity={0.65} color="#f0d6a4" />
+      <pointLight position={[-52, 44, -22]} intensity={0.32} color="#e7cf9f" />
 
-      <LightPool />
+      {/* Soft contact shadows anchor every form to the gallery table. */}
+      <ContactShadows
+        position={[0, -4.96, 4]}
+        scale={[280, 220]}
+        resolution={1024}
+        blur={2.6}
+        far={26}
+        opacity={0.3}
+        color="#5a4a2c"
+      />
+
+      {/* Warm floating light-motes — air and depth. Cheap. */}
+      <Sparkles
+        count={64}
+        scale={[200, 76, 180]}
+        position={[0, 20, 4]}
+        size={3.2}
+        speed={0.26}
+        opacity={0.5}
+        color="#D8BE86"
+        noise={1.4}
+      />
 
       <group ref={spin}>
         <Links links={links} positions={positions} />

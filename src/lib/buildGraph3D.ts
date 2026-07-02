@@ -29,11 +29,14 @@ export interface Graph3DLink {
   target: string
 }
 
-const FO_Z = -38
+// Spacing sized so labels never collide: up to 3 accounts per entity means an
+// entity's account span is 2·ACCOUNT_SPACING, so ENTITY_SPACING must clear that
+// plus a label's width. Tiers pushed apart in Z so they read as clean bands.
+const FO_Z = -50
 const ENTITY_Z = 2
-const ACCOUNT_Z = 46
-const ENTITY_SPACING = 44
-const ACCOUNT_SPACING = 13
+const ACCOUNT_Z = 56
+const ENTITY_SPACING = 74
+const ACCOUNT_SPACING = 26
 
 function entityModel(entityType: string): ModelType {
   const t = entityType.toLowerCase()

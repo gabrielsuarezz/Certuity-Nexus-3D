@@ -52,7 +52,7 @@ function VoiceMic({ agentId }: { agentId: string }) {
       if (el) {
         const listening = useAgentStore.getState().status === 'listening'
         el.style.boxShadow = listening
-          ? `0 0 0 ${2 + v * 7}px rgba(127,184,232,${0.12 + v * 0.35})`
+          ? `0 0 0 ${2 + v * 7}px rgba(61,109,166,${0.12 + v * 0.32})`
           : ''
       }
       rafRef.current = requestAnimationFrame(tick)
@@ -89,7 +89,9 @@ function VoiceMic({ agentId }: { agentId: string }) {
       onClick={active ? stop : start}
       title={active ? 'Stop talking' : 'Talk to your associate'}
       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition ${
-        active ? 'bg-emr/30 text-emr-bright' : 'bg-white/[0.06] text-ink hover:bg-white/10'
+        active
+          ? 'bg-emr/20 text-emr'
+          : 'border border-ink/10 bg-white/70 text-ink-muted hover:bg-white hover:text-ink'
       }`}
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>

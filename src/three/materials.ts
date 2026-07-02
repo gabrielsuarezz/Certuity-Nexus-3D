@@ -4,48 +4,50 @@ import type { MarketEventKind } from '@/types/market'
 import type { ModelType } from '@/lib/buildGraph3D'
 
 /**
- * Certuity-aligned palette — a precious-metal & enamel jewel tone per asset
- * type: a `body` metal, a brighter `accent`, and a "lit" `glow` for glass /
- * gems / dials, on a deep-navy field. The Family Office stays champagne gold;
- * every other type gets its own colour so the map reads rich instead of
- * uniformly pearl-grey. Mirrored by the shape key in Legend.tsx.
+ * Warm private-bank palette — a muted, cohesive "precious materials" tone per
+ * asset type: a `body` finish (gold / bronze / navy / stone), a brighter
+ * `accent`, and a soft `glow` for lit details. Tuned to read as real,
+ * softly-lit objects on a light paper stage — NOT glowing neon. Mirrored by the
+ * shape key in Legend.tsx.
  */
 export const MODEL_PALETTE: Record<ModelType, { body: string; accent: string; glow: string }> = {
-  office: { body: '#C9A86A', accent: '#8A6526', glow: '#FFE6A8' }, // champagne gold + bronze trim
-  trust: { body: '#C08A4E', accent: '#E7C076', glow: '#FFD98A' }, // antique bronze + gilded mark
-  llc: { body: '#5E8FCB', accent: '#9CC4ED', glow: '#BFE6FF' }, // sapphire tower + lit glass
-  holding: { body: '#5C9AA8', accent: '#A6DBE0', glow: '#CFF1F4' }, // teal-steel cluster
-  brokerage: { body: '#3E9E84', accent: '#69D9B4', glow: '#9BFFDC' }, // emerald markets + jade bars
-  alternative: { body: '#E2C88C', accent: '#D6E9FF', glow: '#FFFFFF' }, // champagne girdle + icy diamond
-  managed: { body: '#D4AF62', accent: '#E9C97C', glow: '#FFE6A0' }, // warm gold coins
-  custody: { body: '#7C90A8', accent: '#BAC9DA', glow: '#D6E6F5' }, // platinum / gunmetal safe
-  real_estate: { body: '#CBA079', accent: '#C16A43', glow: '#FFCE8A' }, // sandstone + terracotta + lamplight
+  office: { body: '#C6A15A', accent: '#8A6526', glow: '#F4E4B8' }, // champagne gold + bronze trim
+  trust: { body: '#B58A54', accent: '#E0BE7E', glow: '#F6E1AE' }, // antique bronze + gilded mark
+  llc: { body: '#3E5F86', accent: '#93B4D8', glow: '#CFE0F2' }, // private-bank navy + lit glass
+  holding: { body: '#5D7590', accent: '#A9BED2', glow: '#DCE8F4' }, // slate blue-grey cluster
+  brokerage: { body: '#4F8A72', accent: '#86C4A8', glow: '#CFEAD9' }, // refined green + jade bars
+  alternative: { body: '#7A5A22', accent: '#C9972F', glow: '#FFE6A6' }, // rich amber gem, dark bronze girdle (reads on ivory)
+  managed: { body: '#CBA659', accent: '#E4C87C', glow: '#F6E4AE' }, // warm gold coins
+  custody: { body: '#8A8B84', accent: '#C2C6BE', glow: '#E6E8E2' }, // warm platinum safe
+  real_estate: { body: '#C39A6E', accent: '#B5623C', glow: '#F1CE9A' }, // sandstone + terracotta
 }
 
 export const EVENT_COLOR: Record<MarketEventKind, string> = {
-  surge: '#7FD9BE', // soft jade (up)
-  capital_call: '#E2C88C', // champagne (capital event)
-  drawdown: '#E5917C', // muted terracotta (down)
+  surge: '#3E9E7A', // green (up)
+  capital_call: '#C6A15A', // champagne (capital event)
+  drawdown: '#C2603F', // terracotta (down)
 }
 
-/** Overall model scale per tier (the per-type models are authored ~unit-sized). */
+/** Overall model scale per tier (the per-type models are authored ~unit-sized).
+ *  Sized up past the original so the models fill the screen and cut whitespace. */
 export const TIER_SCALE: Record<NodeKind, number> = {
-  household: 4.6,
-  portfolio: 3,
-  account: 2.3,
+  household: 7.4,
+  portfolio: 4.8,
+  account: 3.7,
 }
 
-/** Resting emissive per tier (the Family Office glows a touch brighter). */
+/** Resting emissive per tier — kept very low so nodes read as lit objects on the
+ *  warm stage, not self-glowing. Selection/trace bump this up (see NodeMesh). */
 export const BASE_EMISSIVE: Record<NodeKind, number> = {
-  household: 0.5,
-  portfolio: 0.3,
-  account: 0.26,
+  household: 0.06,
+  portfolio: 0.04,
+  account: 0.04,
 }
 
 /**
- * Lacquered-jewel material: the Family Office reads as polished gold; entities
- * and accounts as pearls (clearcoat + sheen). Cloned per node so each animates
- * its emissive independently; geometries are shared across nodes.
+ * Softly-lit finish: the Family Office reads as polished gold; entities and
+ * accounts as satin stone/pearl (clearcoat + sheen). Cloned per node so each
+ * animates its emissive independently; geometries are shared across nodes.
  */
 export function makeNodeMaterial(
   color: string,
@@ -55,12 +57,12 @@ export function makeNodeMaterial(
   const isGold = kind === 'household'
   return new THREE.MeshPhysicalMaterial({
     color,
-    metalness: isGold ? 0.95 : 0.45,
-    roughness: isGold ? 0.24 : 0.2,
-    clearcoat: isGold ? 0.5 : 1,
-    clearcoatRoughness: 0.14,
-    sheen: isGold ? 0 : 0.5,
-    sheenColor: new THREE.Color('#ffffff'),
+    metalness: isGold ? 1 : 0.3,
+    roughness: isGold ? 0.32 : 0.42,
+    clearcoat: isGold ? 0.4 : 0.7,
+    clearcoatRoughness: 0.22,
+    sheen: isGold ? 0.15 : 0.55,
+    sheenColor: new THREE.Color('#fff6e2'),
     emissive: new THREE.Color(color),
     emissiveIntensity: BASE_EMISSIVE[kind],
     flatShading: faceted, // crisp facets for the diamond
@@ -70,38 +72,38 @@ export function makeNodeMaterial(
 export function makeAccentMaterial(color: string, faceted = false): THREE.MeshPhysicalMaterial {
   return new THREE.MeshPhysicalMaterial({
     color,
-    metalness: 0.55,
-    roughness: 0.25,
-    clearcoat: 0.6,
-    clearcoatRoughness: 0.18,
+    metalness: 0.6,
+    roughness: 0.3,
+    clearcoat: 0.5,
+    clearcoatRoughness: 0.22,
     emissive: new THREE.Color(color),
-    emissiveIntensity: 0.32,
+    emissiveIntensity: 0.1,
     flatShading: faceted,
   })
 }
 
-/** An emissive "lit" jewel — glass windows, vault dials, finials, gem tables.
- *  Reads as internally-lit and catches a little of the scene's bloom. */
+/** A gently "lit" detail — glass windows, vault dials, finials, gem tables.
+ *  Reads as warm internal light, restrained on the light stage. */
 export function makeGlowMaterial(color: string): THREE.MeshStandardMaterial {
   return new THREE.MeshStandardMaterial({
-    color: new THREE.Color(color).multiplyScalar(0.35),
+    color: new THREE.Color(color).multiplyScalar(0.5),
     emissive: new THREE.Color(color),
-    emissiveIntensity: 1.0,
-    roughness: 0.3,
+    emissiveIntensity: 0.55,
+    roughness: 0.35,
     metalness: 0,
   })
 }
 
-/** One shared, dim, double-sided material for the mirrored reflection "ghosts". */
+/** One shared, dim, double-sided material for the mirrored reflection "ghosts" —
+ *  a soft warm reflection on the gallery table. */
 export const GHOST_MATERIAL = new THREE.MeshStandardMaterial({
-  color: '#9fb6d0',
-  emissive: new THREE.Color('#5f7798'),
-  emissiveIntensity: 0.25,
+  color: '#b8a884',
+  emissive: new THREE.Color('#8a7a58'),
+  emissiveIntensity: 0.12,
   transparent: true,
-  opacity: 0.16,
-  roughness: 0.6,
+  opacity: 0.1,
+  roughness: 0.7,
   metalness: 0.2,
   side: THREE.DoubleSide,
   depthWrite: false,
 })
-

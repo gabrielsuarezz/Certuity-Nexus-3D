@@ -32,7 +32,7 @@ export function LoadingState() {
         <span
           className="absolute inset-[18px] rounded-full"
           style={{
-            border: '1px solid rgba(255,255,255,0.06)',
+            border: '1px solid rgba(34,48,63,0.16)',
             animation: 'wg-pulse-ring 2.4s ease-out infinite',
           }}
         />
@@ -42,15 +42,15 @@ export function LoadingState() {
             style={{
               background:
                 'radial-gradient(circle, var(--emerald-bright), var(--emerald-deep))',
-              boxShadow: '0 0 24px 4px rgba(16,185,129,0.55)',
+              boxShadow: '0 0 20px 3px rgba(46,87,136,0.45)',
             }}
           />
         </span>
       </div>
 
       <div className="flex flex-col items-center gap-2 text-center">
-        <p className="font-serif text-lg tracking-wide text-ink">
-          The Interactive Wealth Graph
+        <p className="font-serif text-xl tracking-wide text-ink">
+          Certuity Prism
         </p>
         <p className="text-sm text-ink-muted">
           Securely assembling the family-office structure
@@ -66,7 +66,7 @@ export function LoadingState() {
             initial={{ opacity: 0, x: -6 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.15 + i * 0.12, duration: 0.4 }}
-            className="shimmer flex items-center gap-2 rounded-md border border-white/5 bg-white/[0.02] px-3 py-1.5"
+            className="shimmer flex items-center gap-2 rounded-md border border-ink/10 bg-white/55 px-3 py-1.5"
           >
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emr" />
             <code className="truncate font-mono text-[11px] text-ink-faint">

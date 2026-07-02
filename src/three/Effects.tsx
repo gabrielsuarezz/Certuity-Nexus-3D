@@ -11,12 +11,12 @@ export function Effects() {
     <EffectComposer multisampling={0}>
       <Bloom
         mipmapBlur
-        intensity={0.7}
-        luminanceThreshold={0.5}
-        luminanceSmoothing={0.2}
-        radius={0.5}
+        intensity={0.32}
+        luminanceThreshold={0.72}
+        luminanceSmoothing={0.25}
+        radius={0.6}
       />
-      <Vignette offset={0.32} darkness={0.5} eskil={false} />
+      <Vignette offset={0.42} darkness={0.16} eskil={false} />
     </EffectComposer>
   )
 }

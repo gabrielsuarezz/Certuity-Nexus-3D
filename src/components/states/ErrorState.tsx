@@ -40,7 +40,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
         <button
           type="button"
           onClick={onRetry}
-          className="mt-6 inline-flex items-center gap-2 rounded-full border border-gld/40 bg-gld/10 px-5 py-2 text-sm font-medium text-gld-bright transition hover:border-gld/70 hover:bg-gld/20"
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-gld px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gld-deep"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path

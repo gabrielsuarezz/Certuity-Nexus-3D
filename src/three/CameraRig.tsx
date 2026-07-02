@@ -4,8 +4,8 @@ import { CameraControls } from '@react-three/drei'
 import { useGraphStore } from '@/store/useGraphStore'
 import type { Positions } from './layout'
 
-// War-room framing: above and in front of the table, angled down.
-const HOME = { px: 0, py: 64, pz: 108, tx: 0, ty: 2, tz: 6 }
+// 3/4 gallery framing: above and in front of the table, angled down.
+const HOME = { px: 0, py: 78, pz: 142, tx: 0, ty: 2, tz: 6 }
 
 /**
  * drei CameraControls with a smooth fly-to on look-through. In demand mode we

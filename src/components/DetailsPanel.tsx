@@ -23,10 +23,13 @@ function kindOf(record: WealthRecord): NodeKind {
   return 'household'
 }
 
+// Tints are used for TEXT and accents on a light paper field, so they are
+// deep enough to read: gold for the office, navy for entities, slate for
+// accounts (alts borrow the gold).
 const KIND_META: Record<NodeKind, { label: string; tint: string }> = {
-  household: { label: 'Family Office', tint: '#E2C88C' },
-  portfolio: { label: 'Legal Entity', tint: '#8FB6DA' },
-  account: { label: 'Financial Account', tint: '#C7D4E2' },
+  household: { label: 'Family Office', tint: '#7A5E2A' },
+  portfolio: { label: 'Legal Entity', tint: '#2E5788' },
+  account: { label: 'Financial Account', tint: '#3B4A5A' },
 }
 
 export function DetailsPanel() {
@@ -54,8 +57,8 @@ export function DetailsPanel() {
           animate={{ x: 0 }}
           exit={{ x: '105%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 34 }}
-          className="absolute right-0 top-0 z-20 flex h-full w-[380px] max-w-[88vw] flex-col border-l border-white/[0.07] bg-[#0b1210]/85 backdrop-blur-2xl"
-          style={{ boxShadow: '-30px 0 80px -30px rgba(0,0,0,0.8)' }}
+          className="absolute right-0 top-0 z-20 flex h-full w-[400px] max-w-[88vw] flex-col border-l border-ink/10 bg-paper/90 backdrop-blur-2xl"
+          style={{ boxShadow: '-30px 0 80px -40px rgba(72,58,30,0.45)' }}
         >
           <PanelHeader record={record} onClose={clearSelection} />
           <div className="scroll-slim flex-1 overflow-y-auto px-5 pb-8 pt-4">
@@ -87,7 +90,7 @@ function PanelHeader({
   const kind = kindOf(record)
   const meta = KIND_META[kind]
   return (
-    <div className="relative border-b border-white/[0.07] px-5 pb-4 pt-5">
+    <div className="relative border-b border-ink/10 px-5 pb-4 pt-5">
       <div
         className="absolute inset-x-0 top-0 h-px"
         style={{
@@ -102,7 +105,7 @@ function PanelHeader({
           >
             {meta.label}
           </span>
-          <h2 className="mt-2 text-lg font-semibold leading-tight text-ink">
+          <h2 className="mt-2 font-serif text-xl font-semibold leading-tight text-ink">
             {record.Name}
           </h2>
         </div>
@@ -110,7 +113,7 @@ function PanelHeader({
           type="button"
           onClick={onClose}
           aria-label="Close details"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 text-ink-muted transition hover:bg-white/5 hover:text-ink"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-ink/15 text-ink-muted transition hover:bg-ink/5 hover:text-ink"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path
@@ -150,7 +153,7 @@ function HouseholdBody({
       <AmountHero
         label="Total Assets Under Management"
         amount={record.SalenticaLMNTS__Total_AUM__c}
-        tint="#E2C88C"
+        tint="#7A5E2A"
       />
       <StatRow
         items={[
@@ -187,9 +190,9 @@ function PortfolioBody({
       <AmountHero
         label="Assets Under Management"
         amount={record.SalenticaLMNTS__AUM__c}
-        tint="#8FB6DA"
+        tint="#2E5788"
       />
-      <ShareBar label="Share of household" value={share} tint="#8FB6DA" />
+      <ShareBar label="Share of household" value={share} tint="#2E5788" />
       <Section title="Entity">
         <Field label="Type" value={record.SalenticaLMNTS__Entity_Type__c} />
         <Field label="Jurisdiction" value={record.SalenticaLMNTS__Jurisdiction__c} />
@@ -237,13 +240,13 @@ function AccountBody({
       <AmountHero
         label="Market Value"
         amount={record.SalenticaLMNTS__Market_Value__c}
-        tint={isAlt ? '#E2C88C' : '#E8EDEB'}
+        tint={isAlt ? '#7A5E2A' : '#3B4A5A'}
       />
       {portfolio && (
         <ShareBar
           label={`Share of ${portfolio.Name}`}
           value={share}
-          tint={isAlt ? '#E2C88C' : '#8FB6DA'}
+          tint={isAlt ? '#7A5E2A' : '#2E5788'}
         />
       )}
       <Section title="Account">
@@ -281,8 +284,8 @@ function AmountHero({
         {label}
       </p>
       <p
-        className="tnum mt-1 text-[32px] font-bold leading-none"
-        style={{ color: tint, textShadow: `0 0 28px ${tint}40` }}
+        className="tnum mt-1.5 font-serif text-[38px] font-semibold leading-none"
+        style={{ color: tint }}
       >
         {formatCurrency(amount)}
       </p>
@@ -296,7 +299,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
       <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-faint">
         {title}
       </h3>
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3.5">
+      <div className="rounded-xl border border-ink/10 bg-white/60 p-3.5">
         {children}
       </div>
     </div>
@@ -314,9 +317,9 @@ function Field({
 }) {
   return (
     <div className="flex items-start justify-between gap-4 py-1.5 first:pt-0 last:pb-0">
-      <span className="shrink-0 text-[12px] text-ink-muted">{label}</span>
+      <span className="shrink-0 text-[13px] text-ink-muted">{label}</span>
       <span
-        className={`text-right text-[12.5px] font-medium text-ink ${
+        className={`text-right text-[13.5px] font-medium text-ink ${
           mono ? 'font-mono tnum' : ''
         }`}
       >
@@ -332,7 +335,7 @@ function StatRow({ items }: { items: { label: string; value: string }[] }) {
       {items.map((it) => (
         <div
           key={it.label}
-          className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5"
+          className="rounded-xl border border-ink/10 bg-white/60 px-3 py-2.5"
         >
           <p className="tnum text-xl font-bold text-ink">{it.value}</p>
           <p className="text-[10px] uppercase tracking-[0.14em] text-ink-faint">
@@ -361,13 +364,13 @@ function ShareBar({
           {formatPercent(value)}
         </span>
       </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06]">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10">
         <motion.div
           className="h-full rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${Math.min(value * 100, 100)}%` }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
-          style={{ background: tint, boxShadow: `0 0 12px ${tint}80` }}
+          style={{ background: tint }}
         />
       </div>
     </div>
@@ -384,7 +387,7 @@ function Beneficiaries({ value }: { value: string }) {
       {list.map((b) => (
         <span
           key={b}
-          className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 text-[11px] text-ink"
+          className="rounded-full border border-ink/10 bg-white/60 px-2.5 py-1 text-[11.5px] text-ink"
         >
           {b}
         </span>
@@ -448,7 +451,7 @@ function Lineage({
               style={{ background: s.tint, boxShadow: `0 0 10px ${s.tint}` }}
             />
             {i < steps.length - 1 && (
-              <span className="my-0.5 w-px flex-1 bg-gradient-to-b from-white/20 to-white/5" />
+              <span className="my-0.5 w-px flex-1 bg-gradient-to-b from-ink/25 to-ink/5" />
             )}
           </div>
           <span className="py-0.5 text-[12.5px] font-medium text-ink">
@@ -462,11 +465,11 @@ function Lineage({
 
 function SourceChip({ record }: { record: WealthRecord }) {
   return (
-    <div className="mt-2 flex items-center gap-2 border-t border-white/[0.06] pt-4">
+    <div className="mt-2 flex items-center gap-2 border-t border-ink/10 pt-4">
       <span className="text-[9px] uppercase tracking-[0.14em] text-ink-faint">
         Source
       </span>
-      <code className="truncate rounded-md border border-white/[0.07] bg-white/[0.02] px-2 py-1 font-mono text-[10px] text-emr-bright/80">
+      <code className="truncate rounded-md border border-ink/10 bg-white/60 px-2 py-1 font-mono text-[10px] text-emr-deep">
         {record.attributes.type}
       </code>
     </div>

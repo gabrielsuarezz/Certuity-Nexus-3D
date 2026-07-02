@@ -3,21 +3,21 @@ import { useAgentStore, type Scenario } from './agentStore'
 /** Before → after projection for a what-if scenario (commit capital / sell a
  *  holding). Read-only: it makes clear nothing has actually changed. */
 
-const DIR_COLOR: Record<string, string> = { up: '#46d39a', down: '#e5917c', flat: '#8aa0b4' }
+const DIR_COLOR: Record<string, string> = { up: '#2f8f68', down: '#c2603f', flat: '#8a94a0' }
 
 export function ScenarioCard({ scenario }: { scenario: Scenario }) {
   const setScenario = useAgentStore((s) => s.setScenario)
 
   return (
-    <div className="rounded-2xl border border-gld/25 bg-gld/[0.06] p-3">
+    <div className="rounded-2xl border border-gld/30 bg-gld/[0.08] p-3 shadow-sm">
       <div className="mb-1.5 flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
           <span
             className="flex h-6 w-6 items-center justify-center rounded-md"
-            style={{ background: 'linear-gradient(160deg, #3a2d12, #241a08)' }}
+            style={{ background: 'linear-gradient(160deg, #B8923F, #7A5E2A)' }}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M4 18l5-5 3 3 7-7M21 9v4M21 9h-4" stroke="#C99B6A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M4 18l5-5 3 3 7-7M21 9v4M21 9h-4" stroke="#FFF6E2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
           <p className="text-[12px] font-semibold text-ink">{scenario.title}</p>

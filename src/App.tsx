@@ -8,6 +8,7 @@ import { PrismScene } from '@/three/PrismScene'
 import { AgentDock } from '@/agent/AgentDock'
 import { AgentBoundary } from '@/agent/AgentBoundary'
 import { SafeguardsPanel } from '@/agent/SafeguardsPanel'
+import { HeroPanel } from '@/components/HeroPanel'
 import { DetailsPanel } from '@/components/DetailsPanel'
 import { useWealthData } from '@/hooks/useWealthData'
 import { useMockMarketData } from '@/hooks/useMockMarketData'
@@ -47,9 +48,18 @@ export default function App() {
           {status === 'ready' && data && (
             <>
               <PrismScene data={data} />
+
+              {/* Left rail — the "at a glance" hero anchors the composition, with
+                  the live safeguards feed stacked beneath it. */}
+              <div className="pointer-events-none absolute left-4 top-[74px] z-20 hidden w-[338px] max-w-[86vw] flex-col gap-3 sm:flex">
+                <HeroPanel />
+                <AgentBoundary>
+                  <SafeguardsPanel />
+                </AgentBoundary>
+              </div>
+
               <DetailsPanel />
               <AgentBoundary>
-                <SafeguardsPanel />
                 <AgentDock />
               </AgentBoundary>
             </>

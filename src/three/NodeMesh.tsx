@@ -43,7 +43,7 @@ export function NodeMesh({ node, index }: { node: Graph3DNode; index: number }) 
   const glowMaterial = useMemo(() => makeGlowMaterial(palette.glow), [palette.glow])
   const tierScale = TIER_SCALE[node.kind]
   const baseEmissive = BASE_EMISSIVE[node.kind]
-  const accent = node.isAlt || node.kind === 'household' ? '#E2C88C' : '#C7D4E2'
+  const accent = node.isAlt || node.kind === 'household' ? '#7A5E2A' : '#3B4A5A'
 
   const selectedId = useGraphStore((s) => s.selectedId)
   const lineage = useGraphStore((s) => s.lineage)
@@ -157,28 +157,36 @@ export function NodeMesh({ node, index }: { node: Graph3DNode; index: number }) 
 
       <Billboard position={[0, labelY, 0]}>
         <Text
-          position={[0, VALUE_SIZE[node.kind] * 0.9, 0]}
+          position={[0, 0.6, 0]}
           fontSize={NAME_SIZE[node.kind]}
-          color="#EEF3F9"
+          color="#22303F"
           fillOpacity={labelOpacity}
-          maxWidth={node.kind === 'account' ? 24 : 44}
+          maxWidth={node.kind === 'account' ? 19 : 40}
           textAlign="center"
           anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.06}
-          outlineColor="#040b16"
+          anchorY="bottom"
+          outlineWidth={0.12}
+          outlineColor="#FBF8F1"
+          outlineOpacity={labelOpacity}
+          renderOrder={3}
+          material-depthTest={false}
+          material-depthWrite={false}
         >
           {node.label}
         </Text>
         <Text
-          position={[0, -NAME_SIZE[node.kind] * 0.55, 0]}
+          position={[0, -0.35, 0]}
           fontSize={VALUE_SIZE[node.kind]}
           color={accent}
           fillOpacity={labelOpacity}
           anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.05}
-          outlineColor="#040b16"
+          anchorY="top"
+          outlineWidth={0.1}
+          outlineColor="#FBF8F1"
+          outlineOpacity={labelOpacity}
+          renderOrder={3}
+          material-depthTest={false}
+          material-depthWrite={false}
         >
           {formatCompactCurrency(liveValue)}
         </Text>

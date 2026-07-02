@@ -45,9 +45,9 @@ export function Links({
         <bufferAttribute attach="attributes-position" args={[buffer, 3]} />
       </bufferGeometry>
       <lineBasicMaterial
-        color="#C9A86A"
+        color="#9C7A34"
         transparent
-        opacity={dimmed ? 0.1 : 0.42}
+        opacity={dimmed ? 0.12 : 0.55}
         toneMapped={false}
       />
     </lineSegments>

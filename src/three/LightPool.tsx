@@ -13,9 +13,9 @@ export function LightPool() {
     const ctx = canvas.getContext('2d')
     if (ctx) {
       const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
-      g.addColorStop(0, 'rgba(110,150,205,0.16)')
-      g.addColorStop(0.5, 'rgba(60,90,140,0.06)')
-      g.addColorStop(1, 'rgba(11,30,54,0)')
+      g.addColorStop(0, 'rgba(255,244,220,0.5)')
+      g.addColorStop(0.5, 'rgba(226,203,150,0.16)')
+      g.addColorStop(1, 'rgba(226,203,150,0)')
       ctx.fillStyle = g
       ctx.fillRect(0, 0, size, size)
     }

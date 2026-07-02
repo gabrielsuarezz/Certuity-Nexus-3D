@@ -20,11 +20,11 @@ export function ApprovalCard({ approval }: { approval: Approval }) {
 
   return (
     <div
-      className="rounded-xl border border-gld/40 bg-gld/10 p-3"
-      style={{ boxShadow: '0 0 24px -10px rgba(201,168,106,0.5)' }}
+      className="rounded-xl border border-gld/40 bg-gld/[0.12] p-3"
+      style={{ boxShadow: '0 12px 28px -18px rgba(122,94,42,0.6)' }}
     >
       <div className="flex items-center gap-2">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gld-bright">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gld-deep">
           Confirmation required
         </span>
       </div>
@@ -35,14 +35,14 @@ export function ApprovalCard({ approval }: { approval: Approval }) {
           <button
             type="button"
             onClick={() => decide(true)}
-            className="flex-1 rounded-lg bg-gld/20 px-3 py-1.5 text-[12px] font-medium text-gld-bright transition hover:bg-gld/30"
+            className="flex-1 rounded-lg bg-gld px-3 py-1.5 text-[12.5px] font-semibold text-white shadow-sm transition hover:bg-gld-deep"
           >
             Approve
           </button>
           <button
             type="button"
             onClick={() => decide(false)}
-            className="flex-1 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-ink-muted transition hover:bg-white/5"
+            className="flex-1 rounded-lg border border-ink/15 px-3 py-1.5 text-[12.5px] text-ink-muted transition hover:bg-ink/5"
           >
             Decline
           </button>
