@@ -94,6 +94,19 @@ export function makeGlowMaterial(color: string): THREE.MeshStandardMaterial {
   })
 }
 
+/** Amber "needs attention" ring shown on the floor beneath accounts the
+ *  reconciliation layer flagged — subtle, matching the palette's amber accents.
+ *  Cloned per flagged node so lineage dimming stays independent. */
+export function makeReconRingMaterial(): THREE.MeshBasicMaterial {
+  return new THREE.MeshBasicMaterial({
+    color: '#C9972F',
+    transparent: true,
+    opacity: 0.45,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  })
+}
+
 /** One shared, dim, double-sided material for the mirrored reflection "ghosts" —
  *  a soft warm reflection on the gallery table. */
 export const GHOST_MATERIAL = new THREE.MeshStandardMaterial({

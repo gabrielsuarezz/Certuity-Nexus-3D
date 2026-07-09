@@ -76,6 +76,20 @@ async def analyze_doc(file: UploadFile = File(...)):
     return await analyze_document(data, file.filename or "document", repo)
 
 
+@app.get("/api/recon-flags")
+def recon_flags():
+    """Per-account data-health flags for the map's amber badges (client-scoped,
+    read-only). Empty unless the data source carries a reconciliation overlay."""
+    accounts = make_repository(settings.demo_client_id).list_accounts()
+    return {
+        "flags": {
+            a["id"]: a["recon_flag"]
+            for a in accounts
+            if a.get("recon_flag") and a["recon_flag"] != "none"
+        }
+    }
+
+
 @app.get("/api/wealth-graph")
 def wealth_graph():
     """Realizes the frontend's service seam: serve the Salesforce-shaped portfolio."""

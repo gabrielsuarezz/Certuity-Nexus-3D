@@ -27,7 +27,13 @@ interface GraphState {
   /** Live aggregated household AUM (drives the top-nav readout). */
   liveTotalAum: number
 
+  // ── Data health (CRM vs Black Diamond reconciliation) ────────────────────
+  /** Non-"none" recon flag per account id — drives the amber map badges.
+   *  Empty unless the agent backend serves a reconciled data source. */
+  reconFlags: Record<string, string>
+
   setData: (data: WealthData) => void
+  setReconFlags: (flags: Record<string, string>) => void
   selectNode: (id: string) => void
   clearSelection: () => void
   setLookThrough: (on: boolean) => void
@@ -45,6 +51,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   liveValues: {},
   lastEvent: {},
   liveTotalAum: 0,
+  reconFlags: {},
 
   setData: (data) => {
     // Seed live values from the static base figures (they already tie out).
@@ -64,6 +71,8 @@ export const useGraphStore = create<GraphState>((set, get) => ({
       liveTotalAum: data.household.SalenticaLMNTS__Total_AUM__c,
     })
   },
+
+  setReconFlags: (flags) => set({ reconFlags: flags }),
 
   selectNode: (id) => {
     const { data, lookThrough } = get()

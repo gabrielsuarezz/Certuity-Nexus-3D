@@ -13,15 +13,26 @@ import { DetailsPanel } from '@/components/DetailsPanel'
 import { useWealthData } from '@/hooks/useWealthData'
 import { useMockMarketData } from '@/hooks/useMockMarketData'
 import { useGraphStore } from '@/store/useGraphStore'
+import { config } from '@/config/env'
 
 export default function App() {
   const { data, status, error, reload } = useWealthData()
   const setData = useGraphStore((s) => s.setData)
+  const setReconFlags = useGraphStore((s) => s.setReconFlags)
 
   // Push normalized data into the store once the service resolves.
   useEffect(() => {
     if (data) setData(data)
   }, [data, setData])
+
+  // Data-health flags for the map's amber badges (empty unless the backend
+  // serves a reconciled data source — a silent no-op otherwise).
+  useEffect(() => {
+    fetch(`${config.agentBaseUrl}/api/recon-flags`)
+      .then((r) => r.json())
+      .then((d: { flags?: Record<string, string> }) => setReconFlags(d.flags ?? {}))
+      .catch(() => {})
+  }, [setReconFlags])
 
   // Simulated real-time market feed (no-op until data is loaded).
   useMockMarketData()

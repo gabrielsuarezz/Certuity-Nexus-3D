@@ -11,6 +11,7 @@ import {
   makeAccentMaterial,
   makeGlowMaterial,
   makeNodeMaterial,
+  makeReconRingMaterial,
 } from './materials'
 import { NodeModel } from './models'
 import { useGraphStore } from '@/store/useGraphStore'
@@ -50,6 +51,13 @@ export function NodeMesh({ node, index }: { node: Graph3DNode; index: number }) 
   const selectNode = useGraphStore((s) => s.selectNode)
   const liveValue = useGraphStore((s) => s.liveValues[node.id] ?? node.baseValue)
   const lastEvent = useGraphStore((s) => s.lastEvent[node.id])
+  const reconFlag = useGraphStore((s) => s.reconFlags[node.id])
+
+  // Amber data-health badge — only mounted for flagged accounts.
+  const reconRingMaterial = useMemo(
+    () => (reconFlag ? makeReconRingMaterial() : null),
+    [reconFlag],
+  )
 
   const selected = selectedId === node.id
   const inLineage = lineage ? lineage.nodeIds.has(node.id) : false
@@ -123,6 +131,7 @@ export function NodeMesh({ node, index }: { node: Graph3DNode; index: number }) 
     accentMaterial.opacity = dimmed ? 0.4 : 1
     glowMaterial.transparent = dimmed
     glowMaterial.opacity = dimmed ? 0.4 : 1
+    if (reconRingMaterial) reconRingMaterial.opacity = dimmed ? 0.16 : 0.45
 
     if (animating) invalidate()
   })
@@ -149,6 +158,17 @@ export function NodeMesh({ node, index }: { node: Graph3DNode; index: number }) 
       <group ref={scaleRef} onClick={onClick} onPointerOver={onOver} onPointerOut={onOut}>
         <NodeModel modelType={node.modelType} m={material} a={accentMaterial} g={glowMaterial} />
       </group>
+
+      {/* Amber data-health ring on the floor beneath flagged accounts. */}
+      {reconRingMaterial && (
+        <mesh
+          rotation={[-Math.PI / 2, 0, 0]}
+          position={[0, FLOOR_Y + 0.06, 0]}
+          material={reconRingMaterial}
+        >
+          <ringGeometry args={[tierScale * 0.88, tierScale * 1.0, 48]} />
+        </mesh>
+      )}
 
       {/* Mirrored reflection ghost (no labels), below the floor line. */}
       <group ref={ghostRef} position={[0, 2 * FLOOR_Y, 0]}>
