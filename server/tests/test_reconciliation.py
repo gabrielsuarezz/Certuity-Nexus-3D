@@ -7,9 +7,12 @@ carry BD values + provenance, the default json source is byte-for-byte
 unchanged, and `reconcile_book` is deterministic.
 """
 
+import asyncio
+
 from app.config import settings
 from app.data.reconciled_repo import ReconciledRepository
 from app.data.repository import JsonRepository
+from app.sk.orchestrator import run_turn
 
 
 def _repo() -> ReconciledRepository:
@@ -112,3 +115,20 @@ def test_reconcile_book_is_deterministic_and_ordered():
     assert [i["type"] for i in first["issues"]] == [
         "value_variance", "value_variance", "orphan", "ghost", "stale_feed",
     ]
+
+
+def test_mock_brain_answers_data_health(monkeypatch):
+    monkeypatch.setattr(settings, "data_source", "reconciled")
+    r = asyncio.run(run_turn("Run a data health check — do our systems agree?"))
+    assert r["blocked"] is False
+    for name in ("Hamilton Lane", "Fidelity", "Schwab Cash Sweep", "J.P. Morgan", "Alts+"):
+        assert name in r["reply"]  # every planted issue is surfaced
+    assert "9.05" in r["reply"]
+
+
+def test_mock_brain_cites_bd_value_and_variance(monkeypatch):
+    monkeypatch.setattr(settings, "data_source", "reconciled")
+    r = asyncio.run(run_turn("What is my Fidelity account worth?"))
+    assert "$81.3M" in r["reply"]  # BD value, not the CRM's $80.0M
+    assert "2026-07-08" in r["reply"]
+    assert "1.59" in r["reply"]  # the CRM variance is mentioned

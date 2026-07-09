@@ -98,6 +98,49 @@ def _mock_whatif(message: str, repo: WealthRepository, ctx: TurnContext) -> str:
     return res["speak"] + " I've put the before-and-after on your screen — nothing has actually changed."
 
 
+def _mock_recon(repo: WealthRepository, ctx: TurnContext) -> str:
+    recon = getattr(repo, "reconcile_book", None)
+    if not recon:
+        return (
+            "Data-health checks compare the CRM with the Black Diamond feed, which isn't "
+            "connected right now. Everything I'm showing you comes from your book of record."
+        )
+    report = recon()
+    ctx.note("grounded", "Reconciled CRM vs Black Diamond")
+    if not report["issues"]:
+        return (
+            f"Good news — the CRM and Black Diamond agree on all {report['healthy_count']} "
+            f"linked accounts (as of {report['as_of']})."
+        )
+    lines = []
+    for i in report["issues"]:
+        if i["type"] == "value_variance":
+            lines.append(
+                f"{i['account_name']} — the CRM shows {money(i['crm_value'])} but Black Diamond reports "
+                f"{money(i['bd_value'])}, {abs(i['variance_pct'])}% apart ({i['suggested_action']})"
+            )
+        elif i["type"] == "orphan":
+            lines.append(
+                f"{i['account_name']} — {money(i['bd_value'])} at the custodian with no CRM record "
+                f"({i['suggested_action']})"
+            )
+        elif i["type"] == "ghost":
+            lines.append(
+                f"{i['account_name']} — {money(i['crm_value'])} in the CRM with no custodial counterpart "
+                f"({i['suggested_action']})"
+            )
+        else:  # stale_feed
+            lines.append(
+                f"{i['account_name']} — custodial data hasn't updated since {i['as_of']} "
+                f"({i['suggested_action']})"
+            )
+    return (
+        f"I've reconciled your CRM records against the Black Diamond feed (as of {report['as_of']}): "
+        f"{report['healthy_count']} accounts match cleanly, and {len(report['issues'])} need attention. "
+        + "; ".join(lines) + "."
+    )
+
+
 def mock_brain(message: str, repo: WealthRepository, ctx: TurnContext) -> str:
     port = PortfolioPlugin(repo, ctx)
     viz = VisualizePlugin(repo, ctx)
@@ -127,6 +170,9 @@ def mock_brain(message: str, repo: WealthRepository, ctx: TurnContext) -> str:
             f"(about {money(s['total_aum'])} across {s['accounts']} accounts), show how any holding "
             "rolls up to your family office, and tell you how things are performing. What would you like to see?"
         )
+
+    if any(w in m for w in ("data health", "data quality", "reconcil", "discrepanc", "systems agree")):
+        return _mock_recon(repo, ctx)
 
     if any(w in m for w in ("trace", "lineage", "roll up", "rolls up", "flow up", "where does")):
         acc = _find_account(repo, message)

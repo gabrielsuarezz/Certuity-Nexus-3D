@@ -2,6 +2,8 @@
 plain-language string for the agent, records a 'grounded' safeguard event so the
 trust panel shows the answer came from real data, and may drive the 3D map."""
 
+import json
+
 from app.sk._compat import kernel_function
 from app.sk.context import TurnContext
 from app.data.repository import WealthRepository
@@ -59,11 +61,17 @@ class PortfolioPlugin:
         self.ctx.act(action="focus", node_id=a["id"])
         self.ctx.note("grounded", f"Read account: {a['name']}")
         self.ctx.note("map", "Focused holding on map")
-        return (
+        reply = (
             f"{a['name']} is a {a['type']} held at {a['custodian']}, under {a['entity']}. "
             f"It's worth about {money(a['value'])}, up {a['ytd_return_pct']}% year-to-date "
             f"(as of {a['as_of']}). I've highlighted it on your map."
         )
+        if a.get("recon_flag") == "value_variance":
+            reply += (
+                f" One thing to note: the CRM still shows {money(a['crm_stated_value'])} — "
+                f"about {abs(a['variance_pct'])}% off the custodial figure. I can flag it for a sync if you'd like."
+            )
+        return reply
 
     @kernel_function(description="A proactive briefing: portfolio value, today's move, and the few things worth the client's attention (concentration, liquidity, top performer). Use when the client asks to be briefed, for an overview, or 'what should I know'.")
     def get_briefing(self) -> str:
@@ -71,6 +79,15 @@ class PortfolioPlugin:
 
         self.ctx.note("grounded", "Prepared portfolio briefing")
         return build_briefing(self.repo)["speak"]
+
+    @kernel_function(description="Data-health check: reconcile the CRM book of record against the Black Diamond portfolio-accounting feed and report any discrepancies (value variances, accounts missing from either system, stale feeds). Use when asked about data health, data quality, or whether the systems agree.")
+    def reconcile_book(self) -> str:
+        recon = getattr(self.repo, "reconcile_book", None)
+        if not recon:
+            return "Reconciliation isn't available with the current data source."
+        result = recon()
+        self.ctx.note("grounded", "Reconciled CRM vs Black Diamond")
+        return json.dumps(result)
 
     @kernel_function(description="Trace an account's ownership up through its entity to the family office, and show it on the map.")
     def trace_lineage(self, name: str) -> str:
