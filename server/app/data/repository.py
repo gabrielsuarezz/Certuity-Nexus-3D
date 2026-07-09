@@ -161,7 +161,8 @@ class JsonRepository(WealthRepository):
 
 
 def make_repository(client_id: str) -> WealthRepository:
-    """Return the configured data source: live Salesforce, or the bundled JSON."""
+    """Return the configured data source: live Salesforce, the reconciled
+    CRM + Black Diamond overlay, or the bundled JSON."""
     from app.config import settings
 
     if settings.data_source == "salesforce" and settings.sf_consumer_key and settings.sf_instance_url:
@@ -175,4 +176,8 @@ def make_repository(client_id: str) -> WealthRepository:
             from app.guardrails import audit
 
             audit.log("salesforce_fallback")
+    if settings.data_source == "reconciled":
+        from app.data.reconciled_repo import ReconciledRepository
+
+        return ReconciledRepository(client_id)
     return JsonRepository(client_id)

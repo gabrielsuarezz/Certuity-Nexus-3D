@@ -29,7 +29,9 @@ class Settings(BaseSettings):
     demo_client_id: str = "a0R8d00000Smith1"
     audit_log_path: str = "audit.log.jsonl"
 
-    # Data source — json (bundled mock) | salesforce (live CRM via OAuth client credentials)
+    # Data source — json (bundled mock) | salesforce (live CRM via OAuth client
+    # credentials) | reconciled (CRM structure + Black Diamond values, joined
+    # through the ID crosswalk with discrepancy reporting)
     data_source: str = "json"
     sf_consumer_key: str = ""
     sf_consumer_secret: str = ""
