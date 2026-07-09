@@ -1,0 +1,130 @@
+{
+  "source_system": "SS&C Black Diamond",
+  "extract_type": "portfolio_accounting",
+  "generated_at": "2026-07-09T05:15:00Z",
+  "accounts": [
+    {
+      "bd_portfolio_id": "BD-77812",
+      "account_number": "XXXX-4821",
+      "account_name": "Smith Trust Brokerage",
+      "custodian": "Charles Schwab",
+      "market_value": 88012450.0,
+      "as_of": "2026-07-08",
+      "ytd_return_pct": 8.6,
+      "one_year_return_pct": 14.2,
+      "inception_return_pct": 11.4,
+      "positions": [
+        { "symbol": "VTI", "name": "Vanguard Total Stock Market ETF", "quantity": 120000, "market_value": 36010450.0 },
+        { "symbol": "AAPL", "name": "Apple Inc.", "quantity": 95000, "market_value": 20502000.0 },
+        { "symbol": "MSFT", "name": "Microsoft Corp.", "quantity": 42000, "market_value": 19500000.0 },
+        { "symbol": "CASH", "name": "Schwab Bank Sweep", "quantity": 1, "market_value": 12000000.0 }
+      ]
+    },
+    {
+      "bd_portfolio_id": "BD-63020",
+      "account_number": "XXXX-ALT9",
+      "account_name": "Smith Trust Alternatives",
+      "custodian": "iCapital Network",
+      "market_value": 42000000.0,
+      "as_of": "2026-03-31",
+      "ytd_return_pct": 3.1,
+      "one_year_return_pct": 9.8,
+      "inception_return_pct": 12.6,
+      "positions": [
+        { "symbol": "ICGMS", "name": "iCapital Multi-Strategy Fund LP", "quantity": 28000, "market_value": 24500000.0 },
+        { "symbol": "BHCO", "name": "Blue Harbor Credit Opportunities Fund", "quantity": 15000, "market_value": 17500000.0 }
+      ]
+    },
+    {
+      "bd_portfolio_id": "BD-54109",
+      "account_number": "XXXX-7733",
+      "account_name": "Smith Trust Managed Portfolio",
+      "custodian": "Fidelity Investments",
+      "market_value": 81275900.0,
+      "as_of": "2026-07-08",
+      "ytd_return_pct": 7.9,
+      "one_year_return_pct": 12.1,
+      "inception_return_pct": 9.3,
+      "positions": [
+        { "symbol": "FXAIX", "name": "Fidelity 500 Index Fund", "quantity": 210000, "market_value": 44100000.0 },
+        { "symbol": "AGG", "name": "iShares Core US Aggregate Bond ETF", "quantity": 250000, "market_value": 25175900.0 },
+        { "symbol": "CASH", "name": "Fidelity Government Cash Reserves", "quantity": 1, "market_value": 12000000.0 }
+      ]
+    },
+    {
+      "bd_portfolio_id": "BD-81455",
+      "account_number": "XXXX-RE21",
+      "account_name": "Manhattan Commercial Holdings",
+      "custodian": "Northern Trust",
+      "market_value": 52500000.0,
+      "as_of": "2026-06-30",
+      "ytd_return_pct": 2.4,
+      "one_year_return_pct": 5.1,
+      "inception_return_pct": 7.8,
+      "positions": [
+        { "symbol": "RE-412W15", "name": "412 W 15th St Commercial (appraised)", "quantity": 1, "market_value": 38500000.0 },
+        { "symbol": "RE-TRIB", "name": "Tribeca Loft Portfolio (appraised)", "quantity": 1, "market_value": 14000000.0 }
+      ]
+    },
+    {
+      "bd_portfolio_id": "BD-81456",
+      "account_number": "XXXX-RE07",
+      "account_name": "Aspen Estate",
+      "custodian": "Internal",
+      "market_value": 30000000.0,
+      "as_of": "2026-06-30",
+      "ytd_return_pct": 1.8,
+      "one_year_return_pct": 4.2,
+      "inception_return_pct": 6.5,
+      "positions": [
+        { "symbol": "RE-ASPEN", "name": "Aspen Main Residence (appraised)", "quantity": 1, "market_value": 24500000.0 },
+        { "symbol": "RE-ASPLD", "name": "Adjacent Land Parcel (appraised)", "quantity": 1, "market_value": 5500000.0 }
+      ]
+    },
+    {
+      "bd_portfolio_id": "BD-70233",
+      "account_number": "XXXX-9920",
+      "account_name": "Smith Holdings PWM",
+      "custodian": "Goldman Custody",
+      "market_value": 75018110.0,
+      "as_of": "2026-07-08",
+      "ytd_return_pct": 10.2,
+      "one_year_return_pct": 16.8,
+      "inception_return_pct": 12.9,
+      "positions": [
+        { "symbol": "SPY", "name": "SPDR S&P 500 ETF Trust", "quantity": 60000, "market_value": 33000000.0 },
+        { "symbol": "QQQ", "name": "Invesco QQQ Trust", "quantity": 40000, "market_value": 21000000.0 },
+        { "symbol": "GSSN-24", "name": "GS Structured Notes Basket 2024", "quantity": 20000, "market_value": 21018110.0 }
+      ]
+    },
+    {
+      "bd_portfolio_id": "BD-88347",
+      "account_number": "XXXX-PE44",
+      "account_name": "Smith Holdings Private Equity",
+      "custodian": "Hamilton Lane",
+      "market_value": 65430000.0,
+      "as_of": "2026-06-30",
+      "ytd_return_pct": 6.4,
+      "one_year_return_pct": 18.9,
+      "inception_return_pct": 15.2,
+      "positions": [
+        { "symbol": "HLF-XI", "name": "Hamilton Lane Fund XI LP", "quantity": 1, "market_value": 41230000.0 },
+        { "symbol": "HLCO-III", "name": "Hamilton Lane Co-Investment Sleeve III", "quantity": 1, "market_value": 24200000.0 }
+      ]
+    },
+    {
+      "bd_portfolio_id": "BD-90455",
+      "account_number": "XXXX-4471",
+      "account_name": "Schwab Cash Sweep",
+      "custodian": "Charles Schwab",
+      "market_value": 2750000.0,
+      "as_of": "2026-07-08",
+      "ytd_return_pct": 2.1,
+      "one_year_return_pct": 4.6,
+      "inception_return_pct": 4.3,
+      "positions": [
+        { "symbol": "SNVXX", "name": "Schwab Government Money Fund", "quantity": 2750000, "market_value": 2750000.0 }
+      ]
+    }
+  ]
+}
