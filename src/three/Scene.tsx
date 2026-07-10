@@ -12,18 +12,19 @@ import { Effects } from './Effects'
 import { useGraphStore } from '@/store/useGraphStore'
 import type { WealthData } from '@/types/salesforce'
 
-/** Auto-protect FPS on big / high-DPI Chrome windows: drop DPR when frames slow,
- *  restore when they recover (works with the continuous frameloop). */
+/** Auto-protect FPS on big / high-DPI Chrome windows — ONE-WAY only. Every DPR
+ *  change forces the effect composer to rebuild its render targets, which can
+ *  present a black frame; oscillating up/down reads as random flicker. So we
+ *  only ever step DOWN, once, and stay there. */
 function AdaptivePerf() {
   const setDpr = useThree((s) => s.setDpr)
-  return (
-    <PerformanceMonitor
-      onIncline={() => setDpr(1.5)}
-      onDecline={() => setDpr(1)}
-      flipflops={3}
-      onFallback={() => setDpr(1)}
-    />
-  )
+  const degraded = useRef(false)
+  const degrade = () => {
+    if (degraded.current) return
+    degraded.current = true
+    setDpr(1)
+  }
+  return <PerformanceMonitor onDecline={degrade} onFallback={degrade} />
 }
 
 /**
